@@ -128,3 +128,28 @@
     @apply font-sans;
   }
 }
+
+/* ---------------------------------------------------------------------- */
+/* Landing page — "Investment Committee Ledger" identity.                  */
+/* Scoped to .vcb so it never leaks into the app's shadcn theme tokens.    */
+/* ---------------------------------------------------------------------- */
+.vcb {
+  --vcb-ink: #0f151e;
+  --vcb-ink-soft: #1a2330;
+  --vcb-ink-line: rgba(231, 226, 211, 0.1);
+  --vcb-parchment: #f3eedd;
+  --vcb-parchment-line: #ddd2ac;
+  --vcb-text: #e7e2d3;
+  --vcb-muted: #8b93a0;
+  --vcb-brass: #c89b4a;
+  --vcb-brass-deep: #9c7530;
+  --vcb-pos: #5c9074;
+  --vcb-neg: #b5674f;
+  background: var(--vcb-ink);
+  color: var(--vcb-text);
+}
+
+.vcb ::selection {
+  background: var(--vcb-brass);
+  color: var(--vcb-ink);
+}
