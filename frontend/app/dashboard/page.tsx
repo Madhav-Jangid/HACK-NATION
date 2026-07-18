@@ -1,6 +1,13 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { SignOutButton } from "@/components/dashboard/sign-out-button";
+import { AppShell } from "@/components/layout/app-shell";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -13,14 +20,43 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
-      <p className="text-sm text-muted-foreground">Signed in as</p>
-      <h1 className="text-xl font-semibold">{user.email}</h1>
-      <p className="max-w-sm text-sm text-muted-foreground">
-        This is a placeholder — the full investor dashboard (thesis config,
-        discoveries, watchlist) lands in a later phase.
+    <AppShell userEmail={user.email ?? ""}>
+      <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
+        Dashboard
       </p>
-      <SignOutButton />
-    </div>
+      <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+        Welcome back
+      </h1>
+      <p className="mt-2 max-w-lg text-sm text-muted-foreground">
+        The full deal-flow view (today&apos;s discoveries, high-conviction
+        founders, active research) lands in a later phase. For now, set your
+        thesis and start sourcing.
+      </p>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <Link href="/thesis">
+          <Card className="h-full transition-colors hover:border-foreground/25">
+            <CardHeader>
+              <CardTitle>Investment thesis</CardTitle>
+              <CardDescription>
+                Sectors, stage, geography, check size — every recommendation is
+                filtered and scored through this.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link href="/founders">
+          <Card className="h-full transition-colors hover:border-foreground/25">
+            <CardHeader>
+              <CardTitle>Founders</CardTitle>
+              <CardDescription>
+                Search inbound, discover outbound, and track candidates into
+                the research pipeline.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
+    </AppShell>
   );
 }

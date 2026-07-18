@@ -16,7 +16,13 @@ export function SignOutButton() {
   }
 
   return (
-    <Button variant="outline" onClick={handleSignOut} disabled={loading}>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleSignOut}
+      disabled={loading}
+      className="w-full justify-start"
+    >
       {loading ? "Signing out…" : "Sign out"}
     </Button>
   );

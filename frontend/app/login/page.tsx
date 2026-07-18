@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button";
 
 function LoginForm() {
   const router = useRouter();
@@ -38,77 +40,62 @@ function LoginForm() {
   }
 
   return (
-    <div className="vcb flex min-h-screen items-center justify-center px-6">
+    <div className="flex min-h-screen items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm">
         <Link
           href="/"
-          className="text-sm font-medium text-[var(--vcb-muted)] transition-colors hover:text-[var(--vcb-text)]"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           ← VC Brain
         </Link>
 
-        <h1 className="mt-6 text-2xl font-semibold text-[var(--vcb-text)]">
-          Sign in
-        </h1>
-        <p className="mt-2 text-sm text-[var(--vcb-muted)]">
+        <h1 className="mt-6 text-2xl font-semibold tracking-tight">Sign in</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
           Pick up where the committee left off.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
-            <label
-              htmlFor="email"
-              className="text-xs font-medium text-[var(--vcb-muted)]"
-            >
+            <label htmlFor="email" className="text-sm font-medium">
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-sm border border-[var(--vcb-ink-line)] bg-[var(--vcb-ink-soft)] px-3 py-2 text-sm text-[var(--vcb-text)] focus:border-[var(--vcb-brass)] focus:outline-none"
+              className="mt-1.5"
             />
           </div>
           <div>
-            <label
-              htmlFor="password"
-              className="text-xs font-medium text-[var(--vcb-muted)]"
-            >
+            <label htmlFor="password" className="text-sm font-medium">
               Password
             </label>
-            <input
+            <Input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-sm border border-[var(--vcb-ink-line)] bg-[var(--vcb-ink-soft)] px-3 py-2 text-sm text-[var(--vcb-text)] focus:border-[var(--vcb-brass)] focus:outline-none"
+              className="mt-1.5"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-[var(--vcb-neg)]" role="alert">
+            <p className="text-sm text-destructive" role="alert">
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-sm bg-[var(--vcb-brass)] px-4 py-2 text-sm font-medium text-[var(--vcb-ink)] transition-colors hover:bg-[var(--vcb-brass-deep)] disabled:opacity-60"
-          >
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Signing in…" : "Sign in"}
-          </button>
+          </Button>
         </form>
 
-        <p className="mt-6 text-sm text-[var(--vcb-muted)]">
+        <p className="mt-6 text-sm text-muted-foreground">
           New here?{" "}
-          <Link
-            href="/signup"
-            className="text-[var(--vcb-brass)] hover:text-[var(--vcb-brass-deep)]"
-          >
+          <Link href="/signup" className="text-primary hover:underline">
             Create an account
           </Link>
         </p>

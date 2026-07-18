@@ -18,6 +18,8 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -48,73 +50,82 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * VC Brain design tokens — institutional, evidence-first register.
+ * One accent (deep slate-navy), warm-neutral paper, hairline borders,
+ * no gradients. Radius kept tight (terminal-like, not bubbly SaaS).
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.975 0.003 90);
+  --foreground: oklch(0.19 0.014 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.19 0.014 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.19 0.014 260);
+  --primary: oklch(0.32 0.06 255);
+  --primary-foreground: oklch(0.98 0.003 90);
+  --secondary: oklch(0.94 0.006 90);
+  --secondary-foreground: oklch(0.24 0.02 255);
+  --muted: oklch(0.945 0.005 90);
+  --muted-foreground: oklch(0.46 0.014 260);
+  --accent: oklch(0.93 0.018 250);
+  --accent-foreground: oklch(0.24 0.05 255);
+  --destructive: oklch(0.45 0.11 27);
+  --border: oklch(0.885 0.008 85);
+  --input: oklch(0.885 0.008 85);
+  --ring: oklch(0.32 0.06 255 / 45%);
+  --positive: oklch(0.46 0.08 155);
+  --negative: oklch(0.46 0.1 35);
+  --chart-1: oklch(0.32 0.06 255);
+  --chart-2: oklch(0.46 0.08 155);
+  --chart-3: oklch(0.46 0.1 35);
+  --chart-4: oklch(0.6 0.02 260);
+  --chart-5: oklch(0.75 0.01 260);
+  --radius: 0.4rem;
+  --sidebar: oklch(0.965 0.004 90);
+  --sidebar-foreground: oklch(0.19 0.014 260);
+  --sidebar-primary: oklch(0.32 0.06 255);
+  --sidebar-primary-foreground: oklch(0.98 0.003 90);
+  --sidebar-accent: oklch(0.93 0.018 250);
+  --sidebar-accent-foreground: oklch(0.24 0.05 255);
+  --sidebar-border: oklch(0.885 0.008 85);
+  --sidebar-ring: oklch(0.32 0.06 255 / 45%);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --background: oklch(0.16 0.012 260);
+  --foreground: oklch(0.94 0.005 90);
+  --card: oklch(0.2 0.014 260);
+  --card-foreground: oklch(0.94 0.005 90);
+  --popover: oklch(0.2 0.014 260);
+  --popover-foreground: oklch(0.94 0.005 90);
+  --primary: oklch(0.74 0.07 245);
+  --primary-foreground: oklch(0.16 0.02 255);
+  --secondary: oklch(0.26 0.014 260);
+  --secondary-foreground: oklch(0.94 0.005 90);
+  --muted: oklch(0.24 0.012 260);
+  --muted-foreground: oklch(0.66 0.014 260);
+  --accent: oklch(0.27 0.03 250);
+  --accent-foreground: oklch(0.9 0.02 250);
+  --destructive: oklch(0.62 0.11 27);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.74 0.07 245 / 45%);
+  --positive: oklch(0.68 0.09 155);
+  --negative: oklch(0.66 0.1 35);
+  --chart-1: oklch(0.74 0.07 245);
+  --chart-2: oklch(0.68 0.09 155);
+  --chart-3: oklch(0.66 0.1 35);
+  --chart-4: oklch(0.55 0.02 260);
+  --chart-5: oklch(0.4 0.012 260);
+  --sidebar: oklch(0.19 0.014 260);
+  --sidebar-foreground: oklch(0.94 0.005 90);
+  --sidebar-primary: oklch(0.74 0.07 245);
+  --sidebar-primary-foreground: oklch(0.16 0.02 255);
+  --sidebar-accent: oklch(0.27 0.03 250);
+  --sidebar-accent-foreground: oklch(0.9 0.02 250);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.74 0.07 245 / 45%);
 }
 
 @layer base {
@@ -129,27 +140,10 @@
   }
 }
 
-/* ---------------------------------------------------------------------- */
-/* Landing page — "Investment Committee Ledger" identity.                  */
-/* Scoped to .vcb so it never leaks into the app's shadcn theme tokens.    */
-/* ---------------------------------------------------------------------- */
-.vcb {
-  --vcb-ink: #0f151e;
-  --vcb-ink-soft: #1a2330;
-  --vcb-ink-line: rgba(231, 226, 211, 0.1);
-  --vcb-parchment: #f3eedd;
-  --vcb-parchment-line: #ddd2ac;
-  --vcb-text: #e7e2d3;
-  --vcb-muted: #8b93a0;
-  --vcb-brass: #c89b4a;
-  --vcb-brass-deep: #9c7530;
-  --vcb-pos: #5c9074;
-  --vcb-neg: #b5674f;
-  background: var(--vcb-ink);
-  color: var(--vcb-text);
-}
-
-.vcb ::selection {
-  background: var(--vcb-brass);
-  color: var(--vcb-ink);
+/* Tabular numerals for every score, percentage, date, and id — the app's one
+   consistent "data" treatment, used instead of color/gradient for emphasis. */
+.font-data {
+  font-family: var(--font-geist-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
