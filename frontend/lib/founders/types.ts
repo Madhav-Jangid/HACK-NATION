@@ -30,6 +30,8 @@ export type FounderMemory = {
     | "patent"
     | "funding"
     | "social"
+    | "team"
+    | "registration"
     | "other";
   payload: { title?: string; snippet?: string | null };
   source_url: string | null;
@@ -86,19 +88,25 @@ export type CommitteeAgentId =
   | "devils_advocate"
   | "managing_partner";
 
+// A single claim paired with the exact source it traces back to -- the
+// brief's Agentic Traceability stretch goal ("cite the exact data point that
+// drove it"), applied per-claim instead of a loose per-agent citations list.
+export type Claim = { claim: string; source_url: string | null };
+
 export type CommitteeAgentOutput = {
   id: string;
   committee_run_id: string;
   agent: CommitteeAgentId;
   summary: string;
   output: {
-    strengths?: string[];
-    concerns?: string[];
-    citations?: string[];
+    strengths?: Claim[];
+    concerns?: Claim[];
     recommendation?: "invest" | "pass" | "more_info_needed";
-    key_strengths?: string[];
-    key_risks?: string[];
+    key_strengths?: Claim[];
+    key_risks?: Claim[];
     reasoning?: string;
+    portfolio_fit?: "diversifying" | "concentrated" | "no_data";
+    portfolio_notes?: string;
   };
   confidence: number | null;
   created_at: string;
@@ -139,6 +147,16 @@ export type Founder = {
   source_channel: string | null;
   status: string;
   is_cold_start: boolean;
+  // Persona card image -- currently only populated from a GitHub avatar
+  // (LinkedIn/Twitter don't expose one without their own API access).
+  avatar_url: string | null;
+  // Portfolio check (brief's Investment Decision "adversarial & portfolio
+  // check" gate) -- set when an investor marks a founder as actually invested.
+  sector: string | null;
+  stage: string | null;
+  geography: string | null;
+  check_amount: number | null;
+  invested_at: string | null;
   created_at: string;
   updated_at: string;
 };

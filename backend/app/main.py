@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -9,8 +11,20 @@ from app.routes import (
     outreach_router,
     research_router,
 )
+from app.services.scheduler import start_scheduler, stop_scheduler
 
-app = FastAPI(title="VC Brain — AI Backend")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Phase 11 (outbound sourcing must be continuous, not one-shot): starts the
+    # in-process scheduler that re-runs founder discovery on an interval for as
+    # long as this backend process is up.
+    start_scheduler()
+    yield
+    stop_scheduler()
+
+
+app = FastAPI(title="VC Brain — AI Backend", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

@@ -46,9 +46,26 @@ _SYSTEM_PROMPT = (
     "present in the input. Where information genuinely isn't available (cap table, "
     "financials, revenue, round structure, etc.), write that section's line as "
     '"Not disclosed" rather than omitting it or guessing. Do not pad the memo with '
-    "optional sections that don't add real signal. Output clean markdown only, no "
-    "commentary outside the memo itself."
+    "optional sections that don't add real signal. When a claim below carries a "
+    "'(source: ...)' annotation, carry that citation inline in parentheses right "
+    "after the claim in the memo text -- every claim in the memo should trace to "
+    "the exact data point that drove it, per the fund's traceability requirement. "
+    "Output clean markdown only, no commentary outside the memo itself."
 )
+
+
+def _format_claims(claims: list | None) -> str:
+    if not claims:
+        return ""
+    parts = []
+    for c in claims:
+        if isinstance(c, dict):
+            claim = c.get("claim", "")
+            source = c.get("source_url")
+            parts.append(f"{claim} (source: {source})" if source else f"{claim} (source: not cited)")
+        else:
+            parts.append(str(c))
+    return "; ".join(parts)
 
 
 def _committee_context(outputs: list[dict]) -> str:
@@ -57,9 +74,15 @@ def _committee_context(outputs: list[dict]) -> str:
         lines.append(f"### {o['agent']}")
         lines.append(f"Summary: {o.get('summary', '')}")
         if o.get("strengths"):
-            lines.append(f"Strengths: {o['strengths']}")
+            lines.append(f"Strengths: {_format_claims(o['strengths'])}")
         if o.get("concerns"):
-            lines.append(f"Concerns: {o['concerns']}")
+            lines.append(f"Concerns: {_format_claims(o['concerns'])}")
+        if o.get("key_strengths"):
+            lines.append(f"Key strengths: {_format_claims(o['key_strengths'])}")
+        if o.get("key_risks"):
+            lines.append(f"Key risks: {_format_claims(o['key_risks'])}")
+        if o.get("portfolio_fit"):
+            lines.append(f"Portfolio fit: {o['portfolio_fit']} -- {o.get('portfolio_notes', '')}")
         if o.get("confidence") is not None:
             lines.append(f"Confidence: {o['confidence']}")
         lines.append("")

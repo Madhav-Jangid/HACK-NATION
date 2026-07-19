@@ -16,6 +16,7 @@ dependencies = [
     "supabase",
     "loguru",
     "python-multipart",
+    "apscheduler",
 ]
 
 [dependency-groups]

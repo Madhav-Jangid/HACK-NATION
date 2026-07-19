@@ -10,6 +10,7 @@ external cron (Railway cron / GitHub Actions schedule) hitting
 """
 
 import logging
+from urllib.parse import urlparse
 
 from app.services.founder_search import TavilyNotConfigured, discover_founders
 from app.services.founders_repo import create_founder, create_research_job, list_founders, list_investment_theses
@@ -31,9 +32,23 @@ def _existing_urls() -> set[str]:
     return urls
 
 
+def _clean_name(candidate, channel: str) -> str:
+    """The scraped page title is rarely a person's name -- for GitHub it's
+    usually bio text ("cycorpgt (Public profile AI, infra, and startup
+    MVPs...)"), so the URL's username is a far cleaner "name" for the founder
+    record than the page title. Other channels fall back to the title, since
+    there's no equivalent structured handle to extract from a PH/HN URL.
+    """
+    if channel == "github":
+        path = urlparse(candidate.url).path.strip("/")
+        if path:
+            return path.split("/")[0]
+    return candidate.title or candidate.url
+
+
 def _candidate_payload(candidate, channel: str) -> dict:
     payload = {
-        "name": (candidate.title or candidate.url)[:200],
+        "name": _clean_name(candidate, channel)[:200],
         "source": "outbound",
         "source_channel": candidate.source_channel,
     }

@@ -2,6 +2,7 @@ import httpx
 from fastapi import APIRouter
 
 from app.config import settings
+from app.services.scheduler import scheduler_status
 
 router = APIRouter()
 
@@ -28,4 +29,9 @@ async def health() -> dict:
         except httpx.HTTPError:
             supabase_reachable = False
 
-    return {"status": "ok", **checks, "supabase_reachable": supabase_reachable}
+    return {
+        "status": "ok",
+        **checks,
+        "supabase_reachable": supabase_reachable,
+        "outbound_sourcing_scheduler": scheduler_status(),
+    }

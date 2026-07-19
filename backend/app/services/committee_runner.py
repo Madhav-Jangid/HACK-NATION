@@ -24,8 +24,8 @@ from app.services.founders_repo import (
     get_active_thesis,
     get_founder,
     get_latest_founder_score,
-    list_active_founders,
     list_founder_memory_full,
+    list_portfolio_founders,
     update_founder,
 )
 from app.services.memo import generate_memo
@@ -73,11 +73,38 @@ def _thesis_context(thesis: dict | None) -> str | None:
 
 
 def _portfolio_context(founder_id: str) -> str | None:
-    active = list_active_founders(exclude_founder_id=founder_id)
-    if not active:
+    """Brief's Investment Decision "portfolio check": concentration signal
+    against founders actually invested in (status='invested'), not every
+    founder merely sitting in the funnel.
+    """
+    portfolio = list_portfolio_founders(exclude_founder_id=founder_id)
+    if not portfolio:
         return None
-    names = ", ".join(f"{f['name']} ({f.get('company_name') or 'no company on file'})" for f in active[:10])
-    return f"{len(active)} other active portfolio founder(s) already tracked: {names}."
+
+    sector_counts: dict[str, int] = {}
+    stage_counts: dict[str, int] = {}
+    for p in portfolio:
+        if p.get("sector"):
+            sector_counts[p["sector"]] = sector_counts.get(p["sector"], 0) + 1
+        if p.get("stage"):
+            stage_counts[p["stage"]] = stage_counts.get(p["stage"], 0) + 1
+
+    lines = [f"{len(portfolio)} invested portfolio founder(s) on file."]
+    if sector_counts:
+        by_sector = ", ".join(
+            f"{k}: {v}" for k, v in sorted(sector_counts.items(), key=lambda kv: -kv[1])
+        )
+        lines.append(f"By sector: {by_sector}.")
+    if stage_counts:
+        by_stage = ", ".join(
+            f"{k}: {v}" for k, v in sorted(stage_counts.items(), key=lambda kv: -kv[1])
+        )
+        lines.append(f"By stage: {by_stage}.")
+    names = ", ".join(
+        f"{p['name']} ({p.get('company_name') or 'no company on file'})" for p in portfolio[:10]
+    )
+    lines.append(f"Companies: {names}.")
+    return " ".join(lines)
 
 
 def _run_diligence_check(
@@ -228,7 +255,17 @@ def run_committee(run_id: str) -> None:
         _run_diligence_check(run_id, founder["id"], memory_items, outputs)
 
         thesis_context = _thesis_context(get_active_thesis())
-        portfolio_context = _portfolio_context(founder["id"])
+        try:
+            portfolio_context = _portfolio_context(founder["id"])
+        except Exception as e:  # noqa: BLE001 -- the portfolio check is an enrichment,
+            # not required for a recommendation; a missing migration (e.g. the
+            # `founders.sector`/`stage` columns from 0011_portfolio.sql not yet
+            # applied) shouldn't take down the whole committee run.
+            logger.warning("portfolio context lookup failed for founder %s: %s", founder["id"], e)
+            insert_committee_log(
+                run_id, "portfolio_check", f"Portfolio check skipped (lookup failed: {e}).", "warn"
+            )
+            portfolio_context = None
         insert_committee_log(run_id, "agent_managing_partner", "Managing Partner synthesizing...")
         final = run_managing_partner(client, founder, outputs, portfolio_context, thesis_context)
         insert_committee_agent_output(run_id, final)

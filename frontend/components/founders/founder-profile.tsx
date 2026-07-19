@@ -17,6 +17,7 @@ import { InvestmentMemoPanel } from "@/components/founders/investment-memo";
 import { OutreachDraft } from "@/components/founders/outreach-draft";
 import { VerdictRule } from "@/components/ui/verdict-rule";
 import { FounderActions } from "@/components/founders/founder-actions";
+import { PersonaCard } from "@/components/founders/persona-card";
 import type { Founder, FounderMemory, FounderScore } from "@/lib/founders/types";
 
 const CATEGORY_LABELS: Record<FounderMemory["category"], string> = {
@@ -31,6 +32,8 @@ const CATEGORY_LABELS: Record<FounderMemory["category"], string> = {
   patent: "Patents",
   funding: "Funding",
   social: "Social Profiles",
+  team: "Team & Board",
+  registration: "Registration",
 };
 
 const CATEGORY_ORDER: FounderMemory["category"][] = [
@@ -44,6 +47,8 @@ const CATEGORY_ORDER: FounderMemory["category"][] = [
   "award",
   "patent",
   "social",
+  "team",
+  "registration",
   "other",
 ];
 
@@ -83,6 +88,93 @@ function disclosuresFor(founder: Founder, memory: FounderMemory[]): Disclosure[]
     { label: "Twitter / X", value: founder.twitter_url, href: founder.twitter_url ?? undefined },
     { label: "Funding", value: hasFundingEvidence ? "See Funding section below" : null },
   ];
+}
+
+function PortfolioAction({ founder }: { founder: Founder }) {
+  const [open, setOpen] = useState(false);
+  const [sector, setSector] = useState("");
+  const [stage, setStage] = useState("");
+  const [geography, setGeography] = useState("");
+  const [checkAmount, setCheckAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (founder.status === "invested") {
+    return (
+      <Badge variant="secondary" className="rounded-full text-[10px] px-3 py-1">
+        invested{founder.sector ? ` · ${founder.sector}` : ""}{founder.stage ? ` · ${founder.stage}` : ""}
+      </Badge>
+    );
+  }
+
+  async function handleSubmit() {
+    setLoading(true);
+    setError(null);
+    const res = await fetch(`/api/founders/${founder.id}/invest`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sector: sector || null,
+        stage: stage || null,
+        geography: geography || null,
+        check_amount: checkAmount ? Number(checkAmount) : null,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error ?? "Couldn't mark as invested.");
+      setLoading(false);
+      return;
+    }
+    window.location.reload();
+  }
+
+  if (!open) {
+    return (
+      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+        Mark as invested
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5 rounded-lg border border-border bg-[#faf5f3]/40 p-3 w-full sm:w-60">
+      <input
+        placeholder="Sector (e.g. AI infra)"
+        value={sector}
+        onChange={(e) => setSector(e.target.value)}
+        className="rounded border border-border px-2 py-1 text-xs"
+      />
+      <input
+        placeholder="Stage (e.g. pre-seed)"
+        value={stage}
+        onChange={(e) => setStage(e.target.value)}
+        className="rounded border border-border px-2 py-1 text-xs"
+      />
+      <input
+        placeholder="Geography (e.g. Berlin)"
+        value={geography}
+        onChange={(e) => setGeography(e.target.value)}
+        className="rounded border border-border px-2 py-1 text-xs"
+      />
+      <input
+        placeholder="Check amount ($)"
+        type="number"
+        value={checkAmount}
+        onChange={(e) => setCheckAmount(e.target.value)}
+        className="rounded border border-border px-2 py-1 text-xs"
+      />
+      <div className="flex gap-2 pt-0.5">
+        <Button size="sm" onClick={handleSubmit} disabled={loading}>
+          {loading ? "Saving…" : "Confirm invested"}
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+          Cancel
+        </Button>
+      </div>
+      {error && <span className="text-[10px] text-destructive">{error}</span>}
+    </div>
+  );
 }
 
 function RerunResearchButton({ founderId }: { founderId: string }) {
@@ -183,12 +275,15 @@ export function FounderProfile({
           <div className="flex sm:flex-col items-center sm:items-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t border-border/50 sm:border-none">
             <FounderActions founderId={founder.id} />
             <RerunResearchButton founderId={founder.id} />
+            <PortfolioAction founder={founder} />
           </div>
         </CardHeader>
         <CardContent className="pt-2 border-t border-border/40">
           <ResearchProgress founderId={founder.id} />
         </CardContent>
       </Card>
+
+      <PersonaCard founder={founder} memory={memory} />
 
       {score && (
         <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
@@ -332,9 +427,20 @@ export function FounderProfile({
                   </div>
                 </div>
                 {item.payload.snippet && (
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground font-medium">
-                    {item.payload.snippet}
-                  </p>
+                  item.source_type === "github_readme" ? (
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-primary">
+                        View README.md
+                      </summary>
+                      <pre className="mt-2 max-h-80 overflow-y-auto whitespace-pre-wrap rounded-md border border-border/60 bg-[#fffdfd] p-3 font-mono text-[11px] leading-relaxed text-foreground/85">
+                        {item.payload.snippet}
+                      </pre>
+                    </details>
+                  ) : (
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground font-medium">
+                      {item.payload.snippet}
+                    </p>
+                  )
                 )}
                 <div className="mt-2 flex justify-between text-[10px] text-muted-foreground/80 font-semibold border-t border-border/40 pt-2">
                   <span>Collected {formatDate(item.collected_at)}</span>

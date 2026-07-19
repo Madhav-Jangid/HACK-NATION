@@ -15,6 +15,7 @@ import {
   LiveProgressRing,
   AnimatedCard,
 } from "@/components/dashboard/dashboard-charts";
+import { AutoSourcingPanel } from "@/components/dashboard/auto-sourcing-panel";
 
 type FounderRef = { id: string; name: string; company_name: string | null };
 
@@ -34,7 +35,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const [discoveriesRes, activeJobsRes, applicationsRes, scoresRes, watchlistRes] =
+  const [discoveriesRes, activeJobsRes, applicationsRes, scoresRes, watchlistRes, thesisRes] =
     await Promise.all([
       supabase
         .from("founders")
@@ -65,7 +66,14 @@ export default async function DashboardPage() {
         .eq("action", "save")
         .order("created_at", { ascending: false })
         .limit(5),
+      supabase
+        .from("investment_thesis")
+        .select("sectors, stage, geography")
+        .eq("user_id", user.id)
+        .maybeSingle(),
     ]);
+
+  const thesis = thesisRes.data;
 
   const discoveries = (discoveriesRes.data ?? []) as FounderRef[];
 
@@ -119,6 +127,13 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <AutoSourcingPanel
+          sectors={thesis?.sectors ?? []}
+          stage={thesis?.stage ?? []}
+          geography={thesis?.geography ?? []}
+          hasThesis={!!thesis}
+        />
+
         {/* Today's Discoveries - with chart */}
         <AnimatedCard delay={0.1} className="p-6 col-span-1 sm:col-span-2 lg:col-span-2 flex flex-col justify-between overflow-hidden relative">
           <div className="relative z-10 flex justify-between items-start">
