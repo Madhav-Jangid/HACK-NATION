@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { NavLinks } from "@/components/layout/nav-links";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
 
 export function AppShell({
@@ -22,6 +23,7 @@ export function AppShell({
         </div>
         <div className="space-y-3 border-t border-border pt-4">
           <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
+          <ThemeToggle />
           <SignOutButton />
         </div>
       </aside>

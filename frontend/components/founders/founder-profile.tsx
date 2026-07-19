@@ -12,7 +12,11 @@ import {
 } from "@/app/components/ui/card";
 import { ResearchProgress } from "@/components/founders/research-progress";
 import { CommitteePanel } from "@/components/founders/committee-panel";
+import { ThreeAxisScores } from "@/components/founders/three-axis-scores";
+import { InvestmentMemoPanel } from "@/components/founders/investment-memo";
+import { OutreachDraft } from "@/components/founders/outreach-draft";
 import { VerdictRule } from "@/components/ui/verdict-rule";
+import { FounderActions } from "@/components/founders/founder-actions";
 import type { Founder, FounderMemory, FounderScore } from "@/lib/founders/types";
 
 const CATEGORY_LABELS: Record<FounderMemory["category"], string> = {
@@ -174,7 +178,10 @@ export function FounderProfile({
               )}
             </div>
           </div>
-          <RerunResearchButton founderId={founder.id} />
+          <div className="flex flex-col items-end gap-2">
+            <FounderActions founderId={founder.id} />
+            <RerunResearchButton founderId={founder.id} />
+          </div>
         </CardHeader>
         <CardContent>
           <ResearchProgress founderId={founder.id} />
@@ -233,6 +240,12 @@ export function FounderProfile({
       )}
 
       <CommitteePanel founderId={founder.id} />
+
+      <ThreeAxisScores founderId={founder.id} />
+
+      <InvestmentMemoPanel founderId={founder.id} founderName={founder.name} />
+
+      <OutreachDraft founderId={founder.id} />
 
       <Card>
         <CardHeader>

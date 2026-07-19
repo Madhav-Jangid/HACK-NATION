@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/layout/app-shell";
 import { FounderSourcing } from "@/components/founders/founder-sourcing";
+import { NlSearch } from "@/components/founders/nl-search";
 
 export default async function FoundersPage() {
   const supabase = await createClient();
@@ -25,7 +26,8 @@ export default async function FoundersPage() {
         Search a specific founder, or discover new candidates against your
         thesis. Both feed the same pipeline.
       </p>
-      <div className="mt-8">
+      <div className="mt-8 space-y-8">
+        <NlSearch />
         <FounderSourcing />
       </div>
     </AppShell>

@@ -52,3 +52,13 @@ def insert_committee_agent_output(run_id: str, agent_output: dict) -> dict:
     }
     response = _client().table("committee_agent_outputs").insert(payload).execute()
     return response.data[0]
+
+
+def insert_opportunity_score(payload: dict) -> dict:
+    response = _client().table("opportunity_scores").insert(payload).execute()
+    return response.data[0]
+
+
+def insert_investment_memo(payload: dict) -> dict:
+    response = _client().table("investment_memos").insert(payload).execute()
+    return response.data[0]

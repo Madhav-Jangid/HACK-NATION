@@ -147,3 +147,20 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
 }
+
+/* Phase 10 memo PDF export: window.print() scoped to #investment-memo only. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #investment-memo,
+  #investment-memo * {
+    visibility: visible;
+  }
+  #investment-memo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

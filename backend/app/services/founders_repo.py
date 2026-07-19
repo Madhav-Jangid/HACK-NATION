@@ -101,6 +101,35 @@ def list_founder_memory(founder_id: str) -> list[dict]:
     return response.data
 
 
+def list_founder_memory_full(founder_id: str) -> list[dict]:
+    response = (
+        _client()
+        .table("founder_memory")
+        .select("category, payload, source_url, source_type, confidence")
+        .eq("founder_id", founder_id)
+        .execute()
+    )
+    return response.data
+
+
+def list_founders() -> list[dict]:
+    response = _client().table("founders").select("*").execute()
+    return response.data
+
+
+def get_latest_founder_score(founder_id: str) -> dict | None:
+    response = (
+        _client()
+        .table("founder_scores")
+        .select("*")
+        .eq("founder_id", founder_id)
+        .order("computed_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    return response.data[0] if response.data else None
+
+
 def insert_founder_score(payload: dict) -> dict:
     response = _client().table("founder_scores").insert(payload).execute()
     return response.data[0]

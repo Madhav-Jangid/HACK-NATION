@@ -55,9 +55,11 @@ _SYSTEM_PROMPT = (
 )
 
 _PARTNER_RESPONSE_FORMAT = (
-    'Respond with JSON: {"summary": string, "strengths": [string], '
-    '"concerns": [string], "confidence": number between 0 and 1, '
-    '"citations": [source_url, ...]}'
+    'Respond with JSON: {"summary": string, "score": integer 0-100, "strengths": '
+    '[string], "concerns": [string], "confidence": number between 0 and 1, '
+    '"citations": [source_url, ...]}. "score" is your independent 0-100 rating for '
+    "this founder on your specific lens (technical capability, founder quality, "
+    "market attractiveness, or risk level respectively) — not a general vibe score."
 )
 
 
@@ -147,9 +149,16 @@ def run_managing_partner(client, founder: dict, all_outputs: list[dict]) -> dict
         "challenge, and produce a final investment recommendation for a $100K check. "
         "Resolve disagreements explicitly rather than averaging them away.\n\n"
         f"{combined}\n\n"
+        "Also independently answer the brief's third screening axis — Idea vs "
+        "Market: does the idea, as it stands today, survive scrutiny on its own "
+        "merits, or is the team strong enough to pivot to something better? This is "
+        "distinct from the Market Partner's market-size/competition assessment — "
+        "it's about whether *this specific idea* is the right bet in that market.\n\n"
         'Respond with JSON: {"recommendation": "invest" | "pass" | "more_info_needed", '
         '"reasoning": string, "confidence": number between 0 and 1, '
-        '"key_strengths": [string], "key_risks": [string]}'
+        '"key_strengths": [string], "key_risks": [string], '
+        '"idea_vs_market_score": integer 0-100, "idea_vs_market_confidence": number '
+        'between 0 and 1, "idea_vs_market_reasoning": string}'
     )
     result = _call_json(client, user_prompt)
     summary = f"Recommendation: {str(result.get('recommendation', '')).upper()} — {result.get('reasoning', '')}"

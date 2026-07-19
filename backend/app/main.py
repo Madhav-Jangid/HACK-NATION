@@ -1,7 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import committee_router, founders_router, health_router, research_router
+from app.routes import (
+    committee_router,
+    founders_router,
+    health_router,
+    nl_search_router,
+    outreach_router,
+    research_router,
+)
 
 app = FastAPI(title="VC Brain — AI Backend")
 
@@ -20,6 +27,8 @@ app.include_router(health_router)
 app.include_router(founders_router)
 app.include_router(research_router)
 app.include_router(committee_router)
+app.include_router(outreach_router)
+app.include_router(nl_search_router)
 
 
 @app.get("/")

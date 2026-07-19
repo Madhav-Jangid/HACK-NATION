@@ -104,6 +104,29 @@ export type CommitteeAgentOutput = {
   created_at: string;
 };
 
+export type OpportunityAxis = "founder" | "market" | "idea_vs_market";
+
+export type OpportunityScore = {
+  id: string;
+  founder_id: string;
+  committee_run_id: string | null;
+  axis: OpportunityAxis;
+  score: number;
+  confidence: "low" | "medium" | "high";
+  rationale: string[];
+  computed_at: string;
+  created_at: string;
+};
+
+export type InvestmentMemo = {
+  id: string;
+  founder_id: string;
+  committee_run_id: string | null;
+  content: string;
+  generated_at: string;
+  created_at: string;
+};
+
 export type Founder = {
   id: string;
   name: string;
