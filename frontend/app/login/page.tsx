@@ -40,24 +40,29 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen items-center justify-center bg-background bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#fff8f6] via-[#faf5f3] to-[#fbf8f7] px-6">
+      <div className="w-full max-w-md rounded-[2.25rem] border border-border bg-[#fffdfd] p-8 md:p-10 shadow-[0_20px_50px_rgba(156,90,60,0.04)]">
         <Link
           href="/"
-          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary transition-all hover:opacity-80"
         >
-          ← VC Brain
+          ← Back to VC Brain
         </Link>
 
-        <h1 className="mt-6 text-2xl font-semibold tracking-tight">Sign in</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <div className="mt-6 flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-elsie text-sm font-black">
+            B
+          </div>
+          <h1 className="text-xl font-bold tracking-tight text-foreground font-elsie">Sign in</h1>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
           Pick up where the committee left off.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <div>
-            <label htmlFor="email" className="text-sm font-medium">
-              Email
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="text-xs font-bold text-foreground/80">
+              Email Address
             </label>
             <Input
               id="email"
@@ -65,11 +70,11 @@ function LoginForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1.5"
+              className="h-10 rounded-xl px-4 border-border/80 bg-white shadow-sm focus-visible:ring-primary/25"
             />
           </div>
-          <div>
-            <label htmlFor="password" className="text-sm font-medium">
+          <div className="space-y-1.5">
+            <label htmlFor="password" className="text-xs font-bold text-foreground/80">
               Password
             </label>
             <Input
@@ -78,24 +83,24 @@ function LoginForm() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1.5"
+              className="h-10 rounded-xl px-4 border-border/80 bg-white shadow-sm focus-visible:ring-primary/25"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-xs text-destructive font-semibold" role="alert">
               {error}
             </p>
           )}
 
-          <Button type="submit" disabled={loading} className="w-full">
+          <Button type="submit" disabled={loading} className="w-full h-10 rounded-xl bg-primary text-primary-foreground font-semibold shadow-[0_4px_12px_rgba(156,90,60,0.2)] hover:shadow-[0_4px_16px_rgba(156,90,60,0.3)] transition-all">
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
 
-        <p className="mt-6 text-sm text-muted-foreground">
+        <p className="mt-6 text-xs text-muted-foreground text-center">
           New here?{" "}
-          <Link href="/signup" className="text-primary hover:underline">
+          <Link href="/signup" className="text-primary font-bold hover:underline">
             Create an account
           </Link>
         </p>

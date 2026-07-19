@@ -1,0 +1,48 @@
+@layer utilities {
+  .calc-height {
+    height: calc(100vh - 4rem);
+  }
+
+  /* Section Layout */
+  .section {
+    /* min-height: 100vh; */
+    max-height: min-content;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  @media (width <=786px) {
+    .section {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      flex-direction: column !important;
+      flex-wrap: nowrap;
+      gap: 80px;
+    }
+
+    .section>div {
+      margin: 0 0 0 0;
+    }
+  }
+
+  /* top progress bar for route changes */
+  .top-progress-outer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: transparent;
+    z-index: 9999;
+  }
+
+  .top-progress-inner {
+    height: 100%;
+    background: #29d;
+    transition: width 0.2s ease-out;
+    width: 0%;
+  }
+}

@@ -62,3 +62,20 @@ def insert_opportunity_score(payload: dict) -> dict:
 def insert_investment_memo(payload: dict) -> dict:
     response = _client().table("investment_memos").insert(payload).execute()
     return response.data[0]
+
+
+def insert_diligence_gap(payload: dict) -> dict:
+    response = _client().table("diligence_gaps").insert(payload).execute()
+    return response.data[0]
+
+
+def list_diligence_gaps(founder_id: str) -> list[dict]:
+    response = (
+        _client()
+        .table("diligence_gaps")
+        .select("*")
+        .eq("founder_id", founder_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
+    return response.data

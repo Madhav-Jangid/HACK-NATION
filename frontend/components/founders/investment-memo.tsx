@@ -61,11 +61,11 @@ export function InvestmentMemoPanel({
   if (!memo) return null;
 
   return (
-    <Card id="investment-memo" className="print:border-none print:shadow-none">
-      <CardHeader className="flex flex-row items-start justify-between gap-4 print:hidden">
+    <Card id="investment-memo" className="rounded-[2.25rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)] print:border-none print:shadow-none">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-border/40 print:hidden">
         <div>
-          <CardTitle className="text-base">Investment Memo</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-base font-bold font-elsie">Investment Memo</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground mt-0.5">
             Generated from the committee&apos;s findings — evidence-backed, gated
             on the Managing Partner&apos;s synthesis.
           </CardDescription>
@@ -75,15 +75,16 @@ export function InvestmentMemoPanel({
             size="sm"
             variant="outline"
             onClick={() => downloadMarkdown(founderName, memo.content)}
+            className="rounded-full text-xs font-semibold px-4 border border-border hover:bg-secondary/40"
           >
             Export .md
           </Button>
-          <Button size="sm" variant="outline" onClick={() => window.print()}>
+          <Button size="sm" variant="outline" onClick={() => window.print()} className="rounded-full text-xs font-semibold px-4 border border-border hover:bg-secondary/40">
             Export PDF
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <Markdown content={memo.content} />
       </CardContent>
     </Card>

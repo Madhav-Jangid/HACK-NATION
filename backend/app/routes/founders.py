@@ -11,6 +11,7 @@ from app.services import (
     create_founder,
     create_research_job,
     discover_founders,
+    run_due_discovery,
     run_research_job,
     search_founders,
 )
@@ -36,6 +37,32 @@ def discover(body: FounderDiscoverRequest) -> list[FounderCandidate]:
         return discover_founders(body.channel, body.sectors, body.geography, body.max_results)
     except TavilyNotConfigured as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
+
+
+@router.post("/discover/run-due")
+def discover_run_due(background_tasks: BackgroundTasks) -> dict:
+    """Outbound sourcing, cron-triggered: not meant to be clicked from the UI.
+
+    Scans every outbound channel (GitHub, ProductHunt, HackerNews) for every
+    configured investment thesis, skips anything already tracked, and queues
+    research for new hits — this is what makes sourcing "continuous scanning"
+    per the brief instead of a one-shot user-triggered lookup. Point an
+    external scheduler (Railway cron / GitHub Actions schedule) at this route
+    on an interval, e.g. hourly.
+    """
+    try:
+        result = run_due_discovery()
+    except SupabaseNotConfigured as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+
+    for tracked in result.get("founders_tracked", []):
+        background_tasks.add_task(run_research_job, tracked["research_job"]["id"])
+
+    return {
+        "theses_scanned": result["theses_scanned"],
+        "candidates_found": result["candidates_found"],
+        "founders_tracked": len(result.get("founders_tracked", [])),
+    }
 
 
 @router.post("", response_model=FounderCreateResponse)

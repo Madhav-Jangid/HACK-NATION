@@ -49,23 +49,23 @@ export function OutreachDraft({ founderId }: { founderId: string }) {
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
-          <CardTitle className="text-base">Outreach draft</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-base font-bold font-elsie">Outreach draft</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground mt-0.5">
             Grounded in this founder&apos;s collected signals — edit before
             sending yourself.
           </CardDescription>
         </div>
-        <Button size="sm" variant="outline" onClick={handleDraft} disabled={loading}>
+        <Button size="sm" onClick={handleDraft} disabled={loading} className="rounded-full bg-primary hover:scale-[1.01] transition-all text-xs font-semibold px-4">
           {loading ? "Drafting…" : subject ? "Redraft" : "Draft outreach"}
         </Button>
       </CardHeader>
       {(error || subject || body) && (
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4 pt-5">
           {error && (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-xs font-semibold text-destructive px-1" role="alert">
               {error}
             </p>
           )}
@@ -75,15 +75,16 @@ export function OutreachDraft({ founderId }: { founderId: string }) {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Subject"
+                className="h-10 rounded-xl px-4 border-border/80 bg-white shadow-sm focus-visible:ring-primary/25 text-xs font-semibold"
               />
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 rows={6}
-                className="w-full rounded-md border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-xs outline-none focus-visible:border-primary/80 focus-visible:ring-3 focus-visible:ring-primary/20 shadow-sm leading-relaxed"
               />
-              <Button size="sm" variant="outline" onClick={handleCopy}>
-                {copied ? "Copied" : "Copy to clipboard"}
+              <Button size="sm" variant="outline" onClick={handleCopy} className="rounded-full text-xs font-semibold px-5 border-border hover:bg-secondary/40">
+                {copied ? "Copied to clipboard!" : "Copy outreach"}
               </Button>
             </>
           )}

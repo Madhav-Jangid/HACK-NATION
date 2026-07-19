@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+@import "tailwindcss";
+@import "./base.css";
+@import "./utilities.css";
+@import "./animations.css";
+
+@plugin "../node_modules/@tailwindcss/typography";
+
+/* ---------------- THEME CONFIG ---------------- */
+@theme {
+  --background: #faf5f3;
+  --foreground: #2d2221;
+
+  /* Brand Palette - Warm Rose/Terracotta & Sand */
+  --color-brand-black: #2d2221;
+  --color-brand-brown: #9c5a3c;
+  --color-brand-dark: #221716;
+  --color-brand-gray: rgba(255, 255, 255, 0.67);
+  --color-brand-muted: rgba(44, 34, 33, 0.6);
+  --color-brand-off-white: #faf5f3;
+  --color-brand-rose-white: #faf5f3;
+
+  /* Component Colors */
+  --color-c-dark: #2d2221;
+  --color-c-light: #f2e7e4;
+  --color-secondary-50: #b5a4a1;
+  --color-secondary-75: #8c7875;
+  --color-secondary-100: #735d5a;
+  --color-secondary-200: #5c4744;
+  --color-secondary-300: #45322f;
+  --color-secondary-400: #1a0f0e;
+  --color-accent-200: #f2e7e4;
+  --color-accent-400: #ebd8d4;
+  --color-accent-500: #dec5be;
+  --color-accent-600: #a37c73;
+  --color-error: #b83a3a;
+
+  /* Typography Scale */
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-serif: "Plus Jakarta Sans", sans-serif;
+  --font-poppins: "Plus Jakarta Sans", sans-serif;
+  --font-elsie: "Comfortaa", sans-serif;
+
+  --text-para-1: clamp(1.25rem, 1rem + 1vw, 1.6rem);
+  --text-para-2: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  --text-para-3: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  --text-para-4: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+
+  --text-base: clamp(1rem, 0.9286rem + 0.3571vi, 1.25rem);
+  --text-super: clamp(4rem, 1.303rem + 11.0714vw, 15rem);
+  --text-display: clamp(4rem, 1.203rem + 10.0714vw, 10.25rem);
+
+  --text-heading-1: clamp(3.5rem, 2.3571rem + 5.5143vw, 10.5rem);
+  --text-heading-2: clamp(1.9531rem, 1.496rem + 2.2854vi, 3.5529rem);
+  --text-heading-3: clamp(1.5625rem, 1.2474rem + 1.5755vi, 2.6653rem);
+  --text-heading-4: clamp(1.25rem, 1.0359rem + 1.0707vi, 1.9995rem);
+
+  /* Spacing & Layout */
+  --spacing-section-px: 18%;
+  --spacing-section-py: 6rem;
+  --gap-fluid: clamp(1rem, 0.8571rem + 1.0143vi, 3.5rem);
+  --radius-card: 1.5rem;
+  --radius-dot: 9999px;
+
+  /* Animation */
+  --animate-slow: 0.5s ease-in-out;
+  --animate-dot: dot 2.5s linear infinite;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

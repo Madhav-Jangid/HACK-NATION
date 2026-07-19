@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { NavLinks } from "@/components/layout/nav-links";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
 
 export function AppShell({
@@ -11,24 +10,34 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-background">
-      <aside className="flex w-56 shrink-0 flex-col justify-between border-r border-border px-4 py-6">
+    <div className="flex min-h-screen gap-5 bg-background p-5 font-sans">
+      <aside className="flex w-64 shrink-0 flex-col justify-between rounded-[2rem] border border-border bg-card/75 p-6 shadow-[0_10px_30px_-10px_rgba(156,90,60,0.05)] backdrop-blur-md">
         <div>
-          <Link href="/dashboard" className="text-sm font-semibold tracking-tight">
-            VC Brain
-          </Link>
-          <div className="mt-8">
+          <div className="flex items-center gap-2 px-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(156,90,60,0.25)]">
+              <span className="font-elsie text-lg font-black tracking-tighter">B</span>
+            </div>
+            <Link
+              href="/dashboard"
+              className="font-elsie text-xl font-bold tracking-tight text-foreground transition-all hover:opacity-90"
+            >
+              VC Brain
+            </Link>
+          </div>
+          <div className="mt-10">
             <NavLinks />
           </div>
         </div>
-        <div className="space-y-3 border-t border-border pt-4">
-          <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
-          <ThemeToggle />
+        <div className="space-y-3 rounded-2xl bg-[#fcf9f7] border border-border/60 p-4 shadow-sm">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="truncate text-xs font-semibold text-foreground/80">{userEmail}</p>
+          </div>
           <SignOutButton />
         </div>
       </aside>
-      <main className="min-w-0 flex-1">
-        <div className="mx-auto max-w-4xl px-8 py-10">{children}</div>
+      <main className="min-w-0 flex-1 rounded-[2.25rem] border border-border bg-card p-8 md:p-12 shadow-[0_15px_40px_-15px_rgba(156,90,60,0.03)] overflow-y-auto">
+        <div className="max-w-5xl mx-auto space-y-6">{children}</div>
       </main>
     </div>
   );

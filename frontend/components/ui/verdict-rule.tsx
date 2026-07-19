@@ -1,17 +1,7 @@
+import { cn } from "@/lib/utils";
+
 type Tone = "positive" | "negative" | "neutral";
 
-const TONE_CLASS: Record<Tone, string> = {
-  positive: "text-positive",
-  negative: "text-negative",
-  neutral: "text-foreground",
-};
-
-/**
- * The app's one recurring data treatment: a tracked label, a large tabular-mono
- * value, and a short underline tick — used for every scored judgment (Founder
- * Score, trust confidence, committee recommendation) instead of color fields or
- * gauges, so quantitative claims read the same way everywhere.
- */
 export function VerdictRule({
   label,
   value,
@@ -25,22 +15,39 @@ export function VerdictRule({
   tone?: Tone;
   size?: "default" | "sm";
 }) {
+  const isPositive = tone === "positive";
+  const isNegative = tone === "negative";
+
   return (
-    <div className="inline-flex flex-col items-start">
-      <span className="text-[10px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+    <div
+      className={cn(
+        "inline-flex flex-col rounded-2xl border p-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] min-w-[120px]",
+        isPositive
+          ? "bg-emerald-50/40 border-emerald-100/60 text-emerald-800"
+          : isNegative
+            ? "bg-rose-50/40 border-rose-100/60 text-rose-800"
+            : "bg-[#fffefe] border-border/80 text-foreground"
+      )}
+    >
+      <span className="text-[9px] font-extrabold tracking-[0.16em] text-muted-foreground uppercase leading-none mb-1.5">
         {label}
       </span>
-      <span
-        className={`font-data font-medium ${size === "sm" ? "text-lg" : "text-3xl"} ${TONE_CLASS[tone]}`}
-      >
-        {value}
+      <div className="flex items-baseline gap-1.5">
+        <span
+          className={cn(
+            "font-extrabold leading-none",
+            size === "sm" ? "text-xl" : "text-3xl",
+            isPositive ? "text-emerald-700" : isNegative ? "text-rose-700" : "text-foreground"
+          )}
+        >
+          {value}
+        </span>
         {suffix && (
-          <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+          <span className="text-[10px] font-semibold text-muted-foreground/80 leading-none">
             {suffix}
           </span>
         )}
-      </span>
-      <span className="mt-1 h-px w-6 bg-current opacity-30" />
+      </div>
     </div>
   );
 }

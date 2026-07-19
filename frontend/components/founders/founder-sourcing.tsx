@@ -20,7 +20,6 @@ import {
 } from "@/app/components/ui/select";
 import Link from "next/link";
 import type { Founder, FounderCandidate } from "@/lib/founders/types";
-import { ResearchProgress } from "@/components/founders/research-progress";
 
 const SEARCH_CHANNELS = [
   { value: "all", label: "All sources" },
@@ -154,51 +153,51 @@ export function FounderSourcing() {
 
     await loadTracked();
     setTrackingUrl(null);
-  }
-
-  return (
-    <div className="w-full max-w-3xl space-y-8">
-      <Card>
+  }  return (
+    <div className="w-full space-y-8">
+      <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
         <CardHeader>
-          <CardTitle>Search a founder</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-base font-bold font-elsie">Search a founder</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground">
             Name, startup, or a pasted LinkedIn / GitHub / company URL — pasted
             links are fetched directly for an exact match, not fuzzily searched.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <form onSubmit={handleSearch} className="flex gap-2">
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g. Jane Doe, or github.com/janedoe"
+              className="h-10 rounded-full px-5 border-border/80 bg-white shadow-sm focus-visible:ring-primary/25"
             />
             <Select value={channel} onValueChange={(v) => setChannel(v ?? "all")}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40 h-10 rounded-full border-border/80 bg-white text-xs px-4">
                 <SelectValue placeholder="All sources">
                   {(value: string) =>
                     SEARCH_CHANNELS.find((c) => c.value === value)?.label ?? "All sources"
                   }
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl border border-border bg-[#fffdfd]">
                 {SEARCH_CHANNELS.map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
+                  <SelectItem key={c.value} value={c.value} className="text-xs rounded-lg">
                     {c.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button type="submit" disabled={searching || !query.trim()}>
+            <Button type="submit" disabled={searching || !query.trim()} className="h-10 rounded-full bg-primary px-5 font-semibold text-primary-foreground shadow-md hover:scale-[1.01]">
               {searching ? "Searching…" : "Search"}
             </Button>
           </form>
-          <div className="mt-3">
+          <div className="border-t border-border/50 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={handleDiscover}
               disabled={discovering}
+              className="h-9 rounded-full px-5 text-xs font-semibold hover:bg-secondary/40 transition-all"
             >
               {discovering
                 ? query.trim()
@@ -206,7 +205,7 @@ export function FounderSourcing() {
                   : "Scanning GitHub…"
                 : "Discover on GitHub"}
             </Button>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-2 text-xs text-muted-foreground/75 leading-relaxed">
               {query.trim()
                 ? `Looks up "${query.trim()}" directly on GitHub.`
                 : "With the search box empty, scans for founders matching your investment thesis, scored the same way as an inbound search."}
@@ -216,21 +215,21 @@ export function FounderSourcing() {
       </Card>
 
       {error && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-xs font-semibold text-destructive px-2" role="alert">
           {error}
         </p>
       )}
 
       {candidates.length > 0 && (
-        <Card>
+        <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm">
           <CardHeader>
-            <CardTitle>Candidates</CardTitle>
+            <CardTitle className="text-base font-bold font-elsie">Candidates</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {candidates.map((c) => (
               <div
                 key={c.url}
-                className="flex items-start justify-between gap-4 rounded-lg border p-3"
+                className="flex items-start justify-between gap-4 rounded-[1.25rem] border border-border/80 bg-[#faf5f3]/40 p-4 transition-all hover:scale-[1.01]"
               >
                 <div>
                   <div className="flex items-center gap-2">
@@ -238,23 +237,23 @@ export function FounderSourcing() {
                       href={c.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm font-medium hover:underline"
+                      className="text-sm font-bold text-foreground hover:underline font-elsie"
                     >
                       {c.title}
                     </a>
-                    <Badge variant="secondary">{c.origin}</Badge>
+                    <Badge variant="secondary" className="rounded-full text-[10px] py-0.5 px-2 bg-primary/10 text-primary border-none">{c.origin}</Badge>
                   </div>
                   {c.snippet && (
-                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                    <p className="mt-2 line-clamp-2 text-xs text-muted-foreground leading-relaxed">
                       {c.snippet}
                     </p>
                   )}
                 </div>
                 <Button
                   size="sm"
-                  variant="outline"
                   onClick={() => handleTrack(c)}
                   disabled={trackingUrl === c.url}
+                  className="rounded-full h-8 text-xs font-semibold px-4 bg-primary text-primary-foreground shadow-sm hover:scale-[1.01]"
                 >
                   {trackingUrl === c.url ? "Tracking…" : "Track"}
                 </Button>
@@ -264,33 +263,32 @@ export function FounderSourcing() {
         </Card>
       )}
 
-      <Card>
+      <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm">
         <CardHeader>
-          <CardTitle>Pipeline ({tracked.length})</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-base font-bold font-elsie">Pipeline ({tracked.length})</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground">
             Founders tracked so far, inbound and outbound together.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-3">
           {tracked.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground italic font-medium">
               Nothing tracked yet — search or discover a founder above.
             </p>
           )}
           {tracked.map((f) => (
-            <div key={f.id} className="rounded-lg border p-3">
+            <div key={f.id} className="rounded-[1.25rem] border border-border bg-[#faf5f3]/40 p-4 transition-all hover:scale-[1.01]">
               <div className="flex items-center justify-between">
                 <div>
-                  <Link href={`/founders/${f.id}`} className="text-sm font-medium hover:underline">
+                  <Link href={`/founders/${f.id}`} className="text-sm font-bold text-foreground hover:underline font-elsie">
                     {f.name}
                   </Link>
-                  <p className="text-xs text-muted-foreground">
-                    {f.source} · {f.source_channel ?? "—"} · {f.status}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {f.source} · {f.source_channel ?? "—"} · <span className="font-semibold text-primary">{f.status}</span>
                   </p>
                 </div>
-                {f.is_cold_start && <Badge variant="outline">cold-start</Badge>}
+                {f.is_cold_start && <Badge variant="outline" className="rounded-full text-[10px] px-2 py-0.5 border-primary/30 text-primary bg-primary/5">cold-start</Badge>}
               </div>
-              <ResearchProgress founderId={f.id} />
             </div>
           ))}
         </CardContent>

@@ -144,24 +144,26 @@ export function FounderProfile({
   const verifiedCount = memory.filter((m) => (m.confidence ?? 0) >= VERIFIED_THRESHOLD).length;
 
   return (
-    <div className="w-full max-w-3xl space-y-8">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div>
-            <CardTitle className="text-2xl">{founder.name}</CardTitle>
-            <CardDescription>
-              {founder.company_name ?? "No company on file"} · {founder.source} ·{" "}
-              {founder.source_channel ?? "—"}
-            </CardDescription>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Badge variant="secondary">{founder.status}</Badge>
-              {founder.is_cold_start && <Badge variant="outline">cold-start</Badge>}
+    <div className="w-full max-w-4xl space-y-8 font-sans">
+      <Card className="rounded-[2.25rem] border border-border/80 bg-[#fffdfd] p-6 shadow-sm transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)] overflow-hidden">
+        <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-6 pb-6">
+          <div className="space-y-3">
+            <div>
+              <CardTitle className="text-3xl font-bold font-elsie text-foreground">{founder.name}</CardTitle>
+              <CardDescription className="text-xs text-muted-foreground mt-1">
+                {founder.company_name ?? "No company on file"} · {founder.source} ·{" "}
+                {founder.source_channel ?? "—"}
+              </CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Badge className="rounded-full bg-primary/10 text-primary border-none text-[10px] px-3 py-1 font-semibold">{founder.status}</Badge>
+              {founder.is_cold_start && <Badge variant="outline" className="rounded-full border-primary/20 text-primary text-[10px] px-3 py-1">cold-start</Badge>}
               {founder.github_url && (
                 <a
                   href={founder.github_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-xs text-muted-foreground hover:underline"
+                  className="inline-flex items-center rounded-full border border-border/85 bg-white px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 transition-all hover:bg-secondary/40"
                 >
                   GitHub ↗
                 </a>
@@ -171,35 +173,35 @@ export function FounderProfile({
                   href={founder.company_website}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-xs text-muted-foreground hover:underline"
+                  className="inline-flex items-center rounded-full border border-border/85 bg-white px-3 py-1 text-[11px] font-semibold text-muted-foreground/90 transition-all hover:bg-secondary/40"
                 >
                   Website ↗
                 </a>
               )}
             </div>
           </div>
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex sm:flex-col items-center sm:items-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t border-border/50 sm:border-none">
             <FounderActions founderId={founder.id} />
             <RerunResearchButton founderId={founder.id} />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-2 border-t border-border/40">
           <ResearchProgress founderId={founder.id} />
         </CardContent>
       </Card>
 
       {score && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Founder Score</CardTitle>
-            <CardDescription>
+        <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold font-elsie">Founder Score</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">
               {score.is_cold_start_derived
                 ? "Cold-start fallback — pre-track-record, based on public footprint only."
                 : "Derived from collected signals."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-end gap-4">
+          <CardContent className="space-y-4 pt-3">
+            <div className="flex flex-wrap items-center gap-4">
               <VerdictRule
                 label="Founder Score"
                 value={String(score.score)}
@@ -207,29 +209,37 @@ export function FounderProfile({
                 tone={score.is_cold_start_derived ? "neutral" : "positive"}
               />
               {trend && (
-                <span className="pb-1 text-sm text-muted-foreground">
+                <span className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
                   {trend.symbol} {trend.label}
                 </span>
               )}
               {score.is_cold_start_derived && (
-                <Badge variant="outline" className="mb-1">
+                <Badge variant="outline" className="rounded-full border-primary/20 text-primary text-[10px] px-3 py-1">
                   cold-start
                 </Badge>
               )}
             </div>
-            <ul className="list-disc space-y-1 pl-4 text-xs text-muted-foreground">
-              {score.rationale.map((line, i) => (
-                <li key={i}>{line}</li>
-              ))}
-            </ul>
+            <div className="rounded-2xl border border-border bg-[#faf5f3]/40 p-5">
+              <p className="text-xs font-bold text-foreground/80 mb-3 uppercase tracking-wider">Score Rationale</p>
+              <ul className="space-y-2 text-xs text-muted-foreground font-medium">
+                {score.rationale.map((line, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
             {scores.length > 1 && (
-              <div className="border-t pt-2">
-                <p className="mb-1 text-xs font-medium text-muted-foreground">History</p>
-                <ul className="space-y-0.5 text-xs text-muted-foreground">
+              <div className="border-t border-border/50 pt-4">
+                <p className="mb-2 text-xs font-bold text-foreground/80 uppercase tracking-wider">Score History</p>
+                <ul className="space-y-1.5 text-xs text-muted-foreground font-medium">
                   {scores.map((s) => (
-                    <li key={s.id}>
-                      {formatDate(s.computed_at)} — {s.score} ({s.confidence}
-                      {s.is_cold_start_derived ? ", cold-start" : ""})
+                    <li key={s.id} className="flex justify-between border-b border-border/40 pb-1">
+                      <span>{formatDate(s.computed_at)}</span>
+                      <span className="font-semibold text-foreground">
+                        {s.score} <span className="text-[10px] text-muted-foreground">({s.confidence} conf.{s.is_cold_start_derived ? ", cold-start" : ""})</span>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -247,29 +257,29 @@ export function FounderProfile({
 
       <OutreachDraft founderId={founder.id} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Key Disclosures</CardTitle>
-          <CardDescription>
+      <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold font-elsie">Key Disclosures</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground">
             Per the brief&apos;s own rule: missing data is flagged explicitly, never
             silently omitted.
             {memory.length > 0 &&
               ` ${verifiedCount} of ${memory.length} collected signal(s) are verified via a primary source.`}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+        <CardContent className="pt-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {disclosures.map((d) => (
-              <div key={d.label} className="flex justify-between gap-3 border-b pb-1">
-                <dt className="text-muted-foreground">{d.label}</dt>
-                <dd>
+              <div key={d.label} className="flex flex-col justify-between gap-1 rounded-2xl border border-border bg-[#faf5f3]/40 p-4 transition-all hover:scale-[1.01]">
+                <dt className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">{d.label}</dt>
+                <dd className="text-xs font-semibold text-foreground mt-1 truncate">
                   {d.value ? (
                     d.href ? (
                       <a
                         href={d.href}
                         target="_blank"
                         rel="noreferrer"
-                        className="hover:underline"
+                        className="text-primary hover:underline hover:opacity-95"
                       >
                         {d.value}
                       </a>
@@ -277,61 +287,61 @@ export function FounderProfile({
                       d.value
                     )
                   ) : (
-                    <span className="italic text-muted-foreground">Not disclosed</span>
+                    <span className="italic text-muted-foreground/60 font-normal">Not disclosed</span>
                   )}
                 </dd>
               </div>
             ))}
-          </dl>
+          </div>
         </CardContent>
       </Card>
 
       {memory.length === 0 && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground italic font-medium text-center py-6">
           No founder memory collected yet — research may still be running above.
         </p>
       )}
 
       {CATEGORY_ORDER.filter((cat) => byCategory.has(cat)).map((cat) => (
-        <Card key={cat}>
-          <CardHeader>
-            <CardTitle className="text-base">{CATEGORY_LABELS[cat]}</CardTitle>
-            <CardDescription>{byCategory.get(cat)!.length} item(s)</CardDescription>
+        <Card key={cat} className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold font-elsie">{CATEGORY_LABELS[cat]}</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">{byCategory.get(cat)!.length} item(s) collected</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 pt-3">
             {byCategory.get(cat)!.map((item) => (
-              <div key={item.id} className="rounded-lg border p-3">
-                <div className="flex items-center justify-between gap-2">
+              <div key={item.id} className="rounded-2xl border border-border bg-[#faf5f3]/45 p-4 transition-all hover:scale-[1.01]">
+                <div className="flex items-start justify-between gap-3">
                   {item.source_url ? (
                     <a
                       href={item.source_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm font-medium hover:underline"
+                      className="text-xs font-bold text-foreground hover:underline font-elsie line-clamp-1"
                     >
                       {item.payload.title || item.source_url}
                     </a>
                   ) : (
-                    <span className="text-sm font-medium">
+                    <span className="text-xs font-bold text-foreground font-elsie line-clamp-1">
                       {item.payload.title || "Untitled"}
                     </span>
                   )}
                   <div className="flex shrink-0 items-center gap-1.5">
                     <TrustBadge confidence={item.confidence} />
-                    <Badge variant="outline">{item.source_type ?? "unknown"}</Badge>
+                    <Badge variant="outline" className="rounded-full text-[9px] px-2 py-0.5 border-primary/20 text-primary bg-primary/5">{item.source_type ?? "unknown"}</Badge>
                   </div>
                 </div>
                 {item.payload.snippet && (
-                  <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground font-medium">
                     {item.payload.snippet}
                   </p>
                 )}
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Collected {formatDate(item.collected_at)}
+                <div className="mt-2 flex justify-between text-[10px] text-muted-foreground/80 font-semibold border-t border-border/40 pt-2">
+                  <span>Collected {formatDate(item.collected_at)}</span>
                   {item.confidence != null && (
-                    <> · confidence {Math.round(item.confidence * 100)}%</>
+                    <span>confidence {Math.round(item.confidence * 100)}%</span>
                   )}
-                </p>
+                </div>
               </div>
             ))}
           </CardContent>
@@ -339,20 +349,20 @@ export function FounderProfile({
       ))}
 
       {timeline.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Timeline</CardTitle>
-            <CardDescription>All collected signals, most recent first.</CardDescription>
+        <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold font-elsie">Timeline</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">All collected signals, most recent first.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ol className="space-y-3 border-l pl-4">
+          <CardContent className="pt-3">
+            <ol className="space-y-4 border-l border-border/80 pl-5 ml-1">
               {timeline.map((item) => (
                 <li key={item.id} className="relative">
-                  <span className="absolute -left-[21px] top-1 h-2 w-2 rounded-full bg-foreground/40" />
-                  <p className="text-xs text-muted-foreground">
+                  <span className="absolute -left-[25px] top-1.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(156,90,60,0.5)]" />
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
                     {formatDate(item.collected_at)} · {CATEGORY_LABELS[item.category]}
                   </p>
-                  <p className="text-sm">{item.payload.title || item.source_url}</p>
+                  <p className="text-xs font-semibold text-foreground mt-1">{item.payload.title || item.source_url}</p>
                 </li>
               ))}
             </ol>

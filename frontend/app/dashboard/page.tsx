@@ -101,60 +101,62 @@ export default async function DashboardPage() {
 
   return (
     <AppShell userEmail={user.email ?? ""}>
-      <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
-        Dashboard
-      </p>
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-        Welcome back
-      </h1>
-      <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-        Live deal-flow view across sourcing, research, and scoring.
-      </p>
+      <div>
+        <p className="text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
+          Dashboard
+        </p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-foreground font-elsie">
+          Welcome back
+        </h1>
+        <p className="mt-2 max-w-lg text-xs text-muted-foreground font-medium">
+          Live deal-flow view across sourcing, research, and scoring.
+        </p>
+      </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Card>
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card className="rounded-[2rem] border border-border/85 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader>
-            <CardTitle>Today&apos;s discoveries</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-base font-bold font-elsie">Today&apos;s discoveries</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">
               {discoveries.length} founder{discoveries.length === 1 ? "" : "s"} added today
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-1.5">
+          <CardContent className="space-y-2.5">
             {discoveries.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nothing sourced yet today.</p>
+              <p className="text-xs text-muted-foreground/80 italic font-medium">Nothing sourced yet today.</p>
             )}
             {discoveries.slice(0, 5).map((f) => (
               <Link
                 key={f.id}
                 href={`/founders/${f.id}`}
-                className="block truncate text-sm hover:underline"
+                className="block truncate text-xs font-semibold text-foreground/80 hover:text-primary hover:underline"
               >
                 {f.name}
                 {f.company_name && (
-                  <span className="text-muted-foreground"> · {f.company_name}</span>
+                  <span className="text-muted-foreground font-normal"> · {f.company_name}</span>
                 )}
               </Link>
             ))}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-[2rem] border border-border/85 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader>
-            <CardTitle>High-conviction founders</CardTitle>
-            <CardDescription>Founder Score 70 or above</CardDescription>
+            <CardTitle className="text-base font-bold font-elsie">High-conviction founders</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">Founder Score 70 or above</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-1.5">
+          <CardContent className="space-y-2.5">
             {highConvictionFounders?.length === 0 && (
-              <p className="text-sm text-muted-foreground">None yet.</p>
+              <p className="text-xs text-muted-foreground/80 italic font-medium">None found yet.</p>
             )}
             {highConvictionFounders?.map((f: FounderRef) => (
               <Link
                 key={f.id}
                 href={`/founders/${f.id}`}
-                className="flex items-center justify-between text-sm hover:underline"
+                className="flex items-center justify-between text-xs font-semibold text-foreground/80 hover:text-primary hover:underline"
               >
                 <span className="truncate">{f.name}</span>
-                <span className="font-data text-xs text-muted-foreground">
+                <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full text-[10px]">
                   {latestScoreByFounder.get(f.id)}
                 </span>
               </Link>
@@ -162,45 +164,45 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-[2rem] border border-border/85 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader>
-            <CardTitle>Active research jobs</CardTitle>
-            <CardDescription>Research currently running</CardDescription>
+            <CardTitle className="text-base font-bold font-elsie">Active research jobs</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">Research currently running</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-1.5">
+          <CardContent className="space-y-2.5">
             {activeJobs.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nothing running right now.</p>
+              <p className="text-xs text-muted-foreground/80 italic font-medium">Nothing running right now.</p>
             )}
             {activeJobs.map((job) => (
-              <div key={job.id} className="flex items-center justify-between text-sm">
+              <div key={job.id} className="flex items-center justify-between text-xs">
                 <Link
                   href={job.founders ? `/founders/${job.founders.id}` : "#"}
-                  className="truncate hover:underline"
+                  className="truncate font-semibold text-foreground/80 hover:text-primary hover:underline"
                 >
                   {job.founders?.name ?? "Unknown founder"}
                 </Link>
-                <Badge variant="outline">{job.status}</Badge>
+                <Badge variant="outline" className="rounded-full text-[9px] px-2 py-0.5 border-primary/20 text-primary bg-primary/5">{job.status}</Badge>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-[2rem] border border-border/85 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader>
-            <CardTitle>Applications</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-base font-bold font-elsie">Applications</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">
               {applicationsCount} inbound application{applicationsCount === 1 ? "" : "s"}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-1.5">
+          <CardContent className="space-y-2.5">
             {applications.length === 0 && (
-              <p className="text-sm text-muted-foreground">No applications yet.</p>
+              <p className="text-xs text-muted-foreground/80 italic font-medium">No applications yet.</p>
             )}
             {applications.map((f) => (
               <Link
                 key={f.id}
                 href={`/founders/${f.id}`}
-                className="block truncate text-sm hover:underline"
+                className="block truncate text-xs font-semibold text-foreground/80 hover:text-primary hover:underline"
               >
                 {f.name}
               </Link>
@@ -208,14 +210,14 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-[2rem] border border-border/85 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader>
-            <CardTitle>Watchlist</CardTitle>
-            <CardDescription>Founders you&apos;ve saved</CardDescription>
+            <CardTitle className="text-base font-bold font-elsie">Watchlist</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">Founders you&apos;ve saved</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-1.5">
+          <CardContent className="space-y-2.5">
             {watchlist.length === 0 && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground/80 italic font-medium">
                 Nothing saved yet — save a founder from their profile.
               </p>
             )}
@@ -223,7 +225,7 @@ export default async function DashboardPage() {
               <Link
                 key={w.founder_id}
                 href={`/founders/${w.founder_id}`}
-                className="block truncate text-sm hover:underline"
+                className="block truncate text-xs font-semibold text-foreground/80 hover:text-primary hover:underline"
               >
                 {w.founders?.name ?? "Unknown founder"}
               </Link>
@@ -231,24 +233,27 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-[2rem] border border-border/85 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader>
-            <CardTitle>Notifications</CardTitle>
-            <CardDescription>Nothing to flag right now</CardDescription>
+            <CardTitle className="text-base font-bold font-elsie">Notifications</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">Nothing to flag right now</CardDescription>
           </CardHeader>
+          <CardContent className="h-10 flex items-center justify-center">
+            <span className="text-xs text-muted-foreground/60 italic">Inbox clean</span>
+          </CardContent>
         </Card>
       </div>
 
-      <div className="mt-8 flex gap-3">
+      <div className="mt-8 flex gap-4 border-t border-border/40 pt-6">
         <Link
           href="/thesis"
-          className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          className="text-xs font-bold text-primary bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-full transition-all"
         >
           Edit investment thesis
         </Link>
         <Link
           href="/founders"
-          className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          className="text-xs font-bold text-foreground/75 bg-secondary/40 hover:bg-secondary/60 px-4 py-2 rounded-full transition-all"
         >
           Source founders
         </Link>

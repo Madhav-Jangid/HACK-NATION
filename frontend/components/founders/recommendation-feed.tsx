@@ -32,21 +32,21 @@ export function RecommendationFeed({ candidates }: { candidates: Candidate[] }) 
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {visible.map(({ founder, score, match }) => (
-        <Card key={founder.id}>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <Card key={founder.id} className="rounded-[2.25rem] border border-border/85 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
+          <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-border/40">
             <div>
-              <CardTitle>
-                <Link href={`/founders/${founder.id}`} className="hover:underline">
+              <CardTitle className="text-base font-bold font-elsie">
+                <Link href={`/founders/${founder.id}`} className="hover:underline text-foreground">
                   {founder.name}
                 </Link>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs text-muted-foreground mt-0.5">
                 {founder.company_name ?? "No company on file"} · {founder.source}
               </CardDescription>
               {founder.is_cold_start && (
-                <Badge variant="outline" className="mt-2">
+                <Badge variant="outline" className="rounded-full text-[9px] px-2 py-0.5 border-primary/20 text-primary bg-primary/5 mt-2">
                   cold-start
                 </Badge>
               )}
@@ -56,8 +56,8 @@ export function RecommendationFeed({ candidates }: { candidates: Candidate[] }) 
               onAction={() => setDismissed((prev) => new Set(prev).add(founder.id))}
             />
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex flex-wrap items-end gap-6">
+          <CardContent className="space-y-4 pt-5">
+            <div className="flex flex-wrap items-center gap-6">
               <VerdictRule
                 label="Thesis fit"
                 value={`${match.percent}%`}
@@ -72,11 +72,16 @@ export function RecommendationFeed({ candidates }: { candidates: Candidate[] }) 
                 />
               )}
             </div>
-            <ul className="list-disc space-y-1 pl-4 text-xs text-muted-foreground">
-              {match.reasons.map((reason, i) => (
-                <li key={i}>{reason}</li>
-              ))}
-            </ul>
+            <div className="rounded-2xl border border-border bg-[#faf5f3]/40 p-4">
+              <ul className="space-y-2 text-xs text-muted-foreground font-medium pl-1">
+                {match.reasons.map((reason, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                    <span>{reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </CardContent>
         </Card>
       ))}

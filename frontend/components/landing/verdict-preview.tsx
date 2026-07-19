@@ -13,24 +13,24 @@ const partners = [
  */
 export function VerdictPreview() {
   return (
-    <div className="w-full max-w-md rounded-lg border border-border bg-card p-6">
-      <div className="flex items-baseline justify-between border-b border-border pb-3">
-        <span className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
-          Example output
+    <div className="w-full max-w-md rounded-[2rem] border border-border/80 bg-white/95 p-8 shadow-[0_20px_50px_rgba(156,90,60,0.06)] backdrop-blur-md">
+      <div className="flex items-baseline justify-between border-b border-border/60 pb-4">
+        <span className="text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
+          Live Committee Demo
         </span>
-        <span className="font-data text-xs text-muted-foreground">Seed · AI infra</span>
+        <span className="font-semibold text-xs text-muted-foreground/90 bg-secondary/50 px-2.5 py-1 rounded-full">Seed · AI infra</span>
       </div>
 
-      <ul className="mt-4 space-y-2.5 border-b border-border pb-4">
+      <ul className="mt-6 space-y-3.5 border-b border-border/60 pb-5">
         {partners.map((p) => (
-          <li key={p.name} className="flex items-start justify-between gap-4 text-sm">
-            <span className="font-medium">{p.name}</span>
-            <span className="text-right text-xs text-muted-foreground">{p.note}</span>
+          <li key={p.name} className="flex items-start justify-between gap-4 text-xs">
+            <span className="font-bold text-foreground/80">{p.name}</span>
+            <span className="text-right text-[11px] text-muted-foreground font-medium">{p.note}</span>
           </li>
         ))}
       </ul>
 
-      <div className="mt-4 flex items-end justify-between">
+      <div className="mt-5 flex items-end justify-between">
         <VerdictRule label="Founder Score" value="82" suffix="medium confidence" tone="positive" />
         <VerdictRule
           label="Managing Partner"

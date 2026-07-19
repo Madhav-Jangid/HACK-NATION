@@ -133,3 +133,16 @@ def get_latest_founder_score(founder_id: str) -> dict | None:
 def insert_founder_score(payload: dict) -> dict:
     response = _client().table("founder_scores").insert(payload).execute()
     return response.data[0]
+
+
+def list_investment_theses() -> list[dict]:
+    response = _client().table("investment_thesis").select("*").execute()
+    return response.data
+
+
+def list_active_founders(exclude_founder_id: str | None = None) -> list[dict]:
+    query = _client().table("founders").select("id, name, company_name").eq("status", "active")
+    if exclude_founder_id:
+        query = query.neq("id", exclude_founder_id)
+    response = query.execute()
+    return response.data

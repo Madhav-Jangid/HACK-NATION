@@ -72,25 +72,25 @@ export function ThreeAxisScores({ founderId }: { founderId: string }) {
   if (!hasAny) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Three Independent Scores</CardTitle>
-        <CardDescription>
+    <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base font-bold font-elsie">Three Independent Scores</CardTitle>
+        <CardDescription className="text-xs text-muted-foreground">
           Founder, Market, and Idea-vs-Market — scored independently, never
           averaged together.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <CardContent className="grid grid-cols-1 gap-6 sm:grid-cols-3 pt-3">
         {AXIS_ORDER.map((axis) => {
           const history = byAxis[axis];
           const latest = history[0];
           if (!latest) {
             return (
-              <div key={axis}>
-                <p className="text-[10px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+              <div key={axis} className="rounded-2xl border border-border/80 bg-[#faf5f3]/40 p-4 min-h-[100px] flex flex-col justify-between">
+                <p className="text-[9px] font-extrabold tracking-[0.16em] text-muted-foreground uppercase leading-none">
                   {AXIS_LABELS[axis]}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground italic">
+                <p className="text-xs text-muted-foreground/80 italic font-medium">
                   Not yet scored
                 </p>
               </div>
