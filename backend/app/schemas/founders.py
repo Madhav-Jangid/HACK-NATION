@@ -34,6 +34,9 @@ class FounderCreateRequest(BaseModel):
     source_channel: str | None = None
     deck_storage_path: str | None = None
     deck_text: str | None = None
+    # Multi-tenant isolation: the signed-in investor tracking this founder.
+    # Set by the Next.js route handler from the session, not user-editable.
+    user_id: str
 
 
 class Founder(BaseModel):
@@ -48,6 +51,7 @@ class Founder(BaseModel):
     source_channel: str | None = None
     status: str
     is_cold_start: bool
+    user_id: str
     created_at: str
     updated_at: str
 

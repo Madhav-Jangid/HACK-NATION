@@ -112,8 +112,11 @@ def list_founder_memory_full(founder_id: str) -> list[dict]:
     return response.data
 
 
-def list_founders() -> list[dict]:
-    response = _client().table("founders").select("*").execute()
+def list_founders(user_id: str | None = None) -> list[dict]:
+    query = _client().table("founders").select("*")
+    if user_id:
+        query = query.eq("user_id", user_id)
+    response = query.execute()
     return response.data
 
 
@@ -148,18 +151,21 @@ def list_active_founders(exclude_founder_id: str | None = None) -> list[dict]:
     return response.data
 
 
-def list_portfolio_founders(exclude_founder_id: str | None = None) -> list[dict]:
-    """Founders actually invested in (status='invested'), not merely tracked.
+def list_portfolio_founders(user_id: str, exclude_founder_id: str | None = None) -> list[dict]:
+    """Founders actually invested in (status='invested') by this specific
+    investor, not merely tracked -- and not another investor's portfolio.
 
     Backs the brief's Investment Decision "portfolio check" -- a real
     concentration signal needs actual invested companies, not every founder
-    that happens to be sitting in the funnel.
+    that happens to be sitting in the funnel, and definitely not another
+    tenant's portfolio.
     """
     query = (
         _client()
         .table("founders")
         .select("id, name, company_name, sector, stage, geography, check_amount, invested_at")
         .eq("status", "invested")
+        .eq("user_id", user_id)
     )
     if exclude_founder_id:
         query = query.neq("id", exclude_founder_id)
@@ -167,6 +173,17 @@ def list_portfolio_founders(exclude_founder_id: str | None = None) -> list[dict]
     return response.data
 
 
-def get_active_thesis() -> dict | None:
-    theses = list_investment_theses()
-    return theses[0] if theses else None
+def get_active_thesis(user_id: str) -> dict | None:
+    """The investor's own thesis, not just whichever thesis row happens to be
+    first in the table -- with multiple tenants, that was the root cause of
+    every investor seeing the same thesis-gated recommendations.
+    """
+    response = (
+        _client()
+        .table("investment_thesis")
+        .select("*")
+        .eq("user_id", user_id)
+        .limit(1)
+        .execute()
+    )
+    return response.data[0] if response.data else None

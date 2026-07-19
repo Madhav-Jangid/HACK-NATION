@@ -13,6 +13,6 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { ok, status, data } = await callAiBackend("/founders/nl-search", body);
+  const { ok, status, data } = await callAiBackend("/founders/nl-search", { ...body, user_id: user.id });
   return NextResponse.json(data, { status: ok ? 200 : status });
 }
