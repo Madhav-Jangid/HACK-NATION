@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/app/components/ui/button";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
+import { MoreHorizontal, Bookmark, Heart, X, Loader2 } from "lucide-react";
+
 type Action = "interested" | "skip" | "save";
 
-/**
- * Phase 11/12: Interested / Skip / Save on a founder. Persists via
- * `founder_actions` (owner-scoped RLS) — "save" is what feeds the dashboard's
- * Watchlist widget and the recommendation feed's saved state.
- */
 export function FounderActions({
   founderId,
   onAction,
@@ -63,31 +66,39 @@ export function FounderActions({
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        size="sm"
-        variant={active === "interested" ? "secondary" : "outline"}
-        onClick={() => handleClick("interested")}
-        disabled={pending !== null}
-      >
-        Interested
-      </Button>
-      <Button
-        size="sm"
-        variant={active === "save" ? "secondary" : "outline"}
-        onClick={() => handleClick("save")}
-        disabled={pending !== null}
-      >
-        {active === "save" ? "Saved" : "Save"}
-      </Button>
-      <Button
-        size="sm"
-        variant={active === "skip" ? "secondary" : "outline"}
-        onClick={() => handleClick("skip")}
-        disabled={pending !== null}
-      >
-        Skip
-      </Button>
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-xs text-rose-400 mr-2">{error}</span>}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          disabled={pending !== null}
+        >
+          <span className="sr-only">Open menu</span>
+          {pending !== null ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px] bg-white border border-border text-foreground rounded-xl shadow-md p-1">
+          <DropdownMenuItem
+            onClick={() => handleClick("interested")}
+            className="cursor-pointer hover:bg-secondary/40 focus:bg-secondary/40 text-xs py-2 rounded-lg"
+          >
+            <Heart className={`mr-2 h-3.5 w-3.5 ${active === "interested" ? "text-rose-500 fill-rose-500" : ""}`} />
+            <span>Interested</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => handleClick("save")}
+            className="cursor-pointer hover:bg-secondary/40 focus:bg-secondary/40 text-xs py-2 rounded-lg"
+          >
+            <Bookmark className={`mr-2 h-3.5 w-3.5 ${active === "save" ? "text-primary fill-primary" : ""}`} />
+            <span>{active === "save" ? "Saved" : "Save for later"}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => handleClick("skip")}
+            className="cursor-pointer hover:bg-rose-50 focus:bg-rose-50 text-rose-600 text-xs py-2 rounded-lg"
+          >
+            <X className="mr-2 h-3.5 w-3.5" />
+            <span>Skip</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

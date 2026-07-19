@@ -34,7 +34,7 @@ export function RecommendationFeed({ candidates }: { candidates: Candidate[] }) 
   return (
     <div className="space-y-6">
       {visible.map(({ founder, score, match }) => (
-        <Card key={founder.id} className="rounded-[2.25rem] border border-border/85 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
+        <Card key={founder.id} className="rounded-lg border border-border/85 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
           <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-border/40">
             <div>
               <CardTitle className="text-base font-bold font-elsie">
@@ -72,7 +72,7 @@ export function RecommendationFeed({ candidates }: { candidates: Candidate[] }) 
                 />
               )}
             </div>
-            <div className="rounded-2xl border border-border bg-[#faf5f3]/40 p-4">
+            <div className="rounded-lg border border-border bg-[#faf5f3]/40 p-4">
               <ul className="space-y-2 text-xs text-muted-foreground font-medium pl-1">
                 {match.reasons.map((reason, i) => (
                   <li key={i} className="flex items-start gap-2">

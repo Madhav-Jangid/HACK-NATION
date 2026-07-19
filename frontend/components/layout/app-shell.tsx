@@ -10,34 +10,38 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen gap-5 bg-background p-5 font-sans">
-      <aside className="flex w-64 shrink-0 flex-col justify-between rounded-[2rem] border border-border bg-card/75 p-6 shadow-[0_10px_30px_-10px_rgba(156,90,60,0.05)] backdrop-blur-md">
+    <div className="flex min-h-screen gap-6 bg-background bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#fff8f6] via-[#faf5f3] to-[#fbf8f7] p-6 font-sans">
+      <aside className="relative z-10 flex w-[280px] shrink-0 flex-col justify-between rounded-xl border border-white/40 bg-white/40 p-6 shadow-[0_20px_50px_rgba(4,16,49,0.03)] backdrop-blur-2xl transition-all duration-300">
+        <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-b from-white/60 to-white/10 opacity-50 pointer-events-none -z-10" />
+
         <div>
-          <div className="flex items-center gap-2 px-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(156,90,60,0.25)]">
-              <span className="font-elsie text-lg font-black tracking-tighter">B</span>
+          <div className="flex items-center gap-3 px-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground text-background shadow-[0_8px_16px_rgba(4,16,49,0.2)] transition-transform hover:scale-105">
+              <span className="font-elsie text-xl font-black tracking-tighter">B</span>
             </div>
             <Link
               href="/dashboard"
-              className="font-elsie text-xl font-bold tracking-tight text-foreground transition-all hover:opacity-90"
+              className="font-elsie text-2xl font-bold tracking-tight text-foreground transition-all hover:opacity-80"
             >
               VC Brain
             </Link>
           </div>
-          <div className="mt-10">
+          <div className="mt-12 px-1">
             <NavLinks />
           </div>
         </div>
-        <div className="space-y-3 rounded-2xl bg-[#fcf9f7] border border-border/60 p-4 shadow-sm">
+
+        <div className="space-y-3 rounded-xl bg-white/60 border border-white/50 p-5 shadow-sm backdrop-blur-md transition-all hover:bg-white/80">
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <p className="truncate text-xs font-semibold text-foreground/80">{userEmail}</p>
+            <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
+            <p className="truncate text-xs font-bold text-foreground/80">{userEmail}</p>
           </div>
           <SignOutButton />
         </div>
       </aside>
-      <main className="min-w-0 flex-1 rounded-[2.25rem] border border-border bg-card p-8 md:p-12 shadow-[0_15px_40px_-15px_rgba(156,90,60,0.03)] overflow-y-auto">
-        <div className="max-w-5xl mx-auto space-y-6">{children}</div>
+
+      <main className="relative z-10 min-w-0 flex-1 rounded-xl border border-white/60 bg-white/70 p-8 md:p-14 shadow-[0_30px_60px_rgba(4,16,49,0.05)] backdrop-blur-xl overflow-y-auto">
+        <div className="max-w-6xl mx-auto space-y-8">{children}</div>
       </main>
     </div>
   );

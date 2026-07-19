@@ -72,7 +72,7 @@ export function ThreeAxisScores({ founderId }: { founderId: string }) {
   if (!hasAny) return null;
 
   return (
-    <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+    <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-bold font-elsie">Three Independent Scores</CardTitle>
         <CardDescription className="text-xs text-muted-foreground">
@@ -86,7 +86,7 @@ export function ThreeAxisScores({ founderId }: { founderId: string }) {
           const latest = history[0];
           if (!latest) {
             return (
-              <div key={axis} className="rounded-2xl border border-border/80 bg-[#faf5f3]/40 p-4 min-h-[100px] flex flex-col justify-between">
+              <div key={axis} className="rounded-lg border border-border/80 bg-[#faf5f3]/40 p-4 min-h-[100px] flex flex-col justify-between">
                 <p className="text-[9px] font-extrabold tracking-[0.16em] text-muted-foreground uppercase leading-none">
                   {AXIS_LABELS[axis]}
                 </p>

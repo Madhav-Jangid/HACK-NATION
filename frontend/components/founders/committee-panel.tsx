@@ -144,7 +144,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
   const managingPartner = outputsByAgent.get("managing_partner");
 
   return (
-    <Card className="rounded-[2.25rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
+    <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <CardTitle className="text-base font-bold font-elsie">Investment Committee debate</CardTitle>
@@ -176,7 +176,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
         )}
 
         {run && ACTIVE_STATUSES.has(run.status) && logs.length > 0 && (
-          <div className="rounded-2xl bg-[#281c1b] border border-border text-[#faece9] p-4 shadow-inner">
+          <div className="rounded-lg bg-[#281c1b] border border-border text-[#faece9] p-4 shadow-inner">
             <div className="flex items-center gap-2 border-b border-border/20 pb-2 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
               <Terminal className="h-3.5 w-3.5 text-primary" />
               Live reasoning trace
@@ -193,7 +193,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
         )}
 
         {managingPartner && (
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 relative overflow-hidden">
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-5 relative overflow-hidden">
             <div className="absolute right-4 top-4 opacity-5 pointer-events-none">
               <span className="font-elsie text-8xl font-black">MP</span>
             </div>
@@ -249,7 +249,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
             const IconComponent = AGENT_ICONS[agentId] || User;
             const cardColorClasses = AGENT_COLORS[agentId] || "bg-[#fffdfd] border-border/80 text-foreground";
             return (
-              <div key={agentId} className={cn("rounded-2xl border p-4 transition-all duration-200 hover:scale-[1.01]", cardColorClasses)}>
+              <div key={agentId} className={cn("rounded-lg border p-4 transition-all duration-200 hover:scale-[1.01]", cardColorClasses)}>
                 <div className="flex items-center justify-between gap-2 border-b border-current/10 pb-2 mb-2">
                   <div className="flex items-center gap-2">
                     <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-current/10 text-current">

@@ -13,7 +13,7 @@ const partners = [
  */
 export function VerdictPreview() {
   return (
-    <div className="w-full max-w-md rounded-[2rem] border border-border/80 bg-white/95 p-8 shadow-[0_20px_50px_rgba(156,90,60,0.06)] backdrop-blur-md">
+    <div className="w-full max-w-md rounded-lg border border-border/80 bg-white/95 p-8 shadow-[0_20px_50px_rgba(156,90,60,0.06)] backdrop-blur-md">
       <div className="flex items-baseline justify-between border-b border-border/60 pb-4">
         <span className="text-[10px] font-bold tracking-[0.15em] text-primary uppercase">
           Live Committee Demo

@@ -26,7 +26,7 @@ export function NavLinks() {
             key={link.href}
             href={link.href}
             className={cn(
-              "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-200",
+              "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
               active
                 ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(156,90,60,0.18)]"
                 : "text-muted-foreground hover:bg-[#f6ebe9] hover:text-foreground",

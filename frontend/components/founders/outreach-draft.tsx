@@ -49,7 +49,7 @@ export function OutreachDraft({ founderId }: { founderId: string }) {
   }
 
   return (
-    <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+    <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <CardTitle className="text-base font-bold font-elsie">Outreach draft</CardTitle>
@@ -81,7 +81,7 @@ export function OutreachDraft({ founderId }: { founderId: string }) {
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 rows={6}
-                className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-xs outline-none focus-visible:border-primary/80 focus-visible:ring-3 focus-visible:ring-primary/20 shadow-sm leading-relaxed"
+                className="w-full rounded-lg border border-border bg-white px-4 py-3 text-xs outline-none focus-visible:border-primary/80 focus-visible:ring-3 focus-visible:ring-primary/20 shadow-sm leading-relaxed"
               />
               <Button size="sm" variant="outline" onClick={handleCopy} className="rounded-full text-xs font-semibold px-5 border-border hover:bg-secondary/40">
                 {copied ? "Copied to clipboard!" : "Copy outreach"}

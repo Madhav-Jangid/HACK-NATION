@@ -21,7 +21,7 @@ export function VerdictRule({
   return (
     <div
       className={cn(
-        "inline-flex flex-col rounded-2xl border p-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] min-w-[120px]",
+        "inline-flex flex-col rounded-lg border p-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] min-w-[120px]",
         isPositive
           ? "bg-emerald-50/40 border-emerald-100/60 text-emerald-800"
           : isNegative

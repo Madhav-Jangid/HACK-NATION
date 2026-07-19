@@ -145,7 +145,7 @@ export function FounderProfile({
 
   return (
     <div className="w-full max-w-4xl space-y-8 font-sans">
-      <Card className="rounded-[2.25rem] border border-border/80 bg-[#fffdfd] p-6 shadow-sm transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)] overflow-hidden">
+      <Card className="rounded-lg border border-border/80 bg-[#fffdfd] p-6 shadow-sm transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)] overflow-hidden">
         <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-6 pb-6">
           <div className="space-y-3">
             <div>
@@ -191,7 +191,7 @@ export function FounderProfile({
       </Card>
 
       {score && (
-        <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+        <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-bold font-elsie">Founder Score</CardTitle>
             <CardDescription className="text-xs text-muted-foreground">
@@ -219,7 +219,7 @@ export function FounderProfile({
                 </Badge>
               )}
             </div>
-            <div className="rounded-2xl border border-border bg-[#faf5f3]/40 p-5">
+            <div className="rounded-lg border border-border bg-[#faf5f3]/40 p-5">
               <p className="text-xs font-bold text-foreground/80 mb-3 uppercase tracking-wider">Score Rationale</p>
               <ul className="space-y-2 text-xs text-muted-foreground font-medium">
                 {score.rationale.map((line, i) => (
@@ -257,7 +257,7 @@ export function FounderProfile({
 
       <OutreachDraft founderId={founder.id} />
 
-      <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+      <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-bold font-elsie">Key Disclosures</CardTitle>
           <CardDescription className="text-xs text-muted-foreground">
@@ -270,7 +270,7 @@ export function FounderProfile({
         <CardContent className="pt-3">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {disclosures.map((d) => (
-              <div key={d.label} className="flex flex-col justify-between gap-1 rounded-2xl border border-border bg-[#faf5f3]/40 p-4 transition-all hover:scale-[1.01]">
+              <div key={d.label} className="flex flex-col justify-between gap-1 rounded-lg border border-border bg-[#faf5f3]/40 p-4 transition-all hover:scale-[1.01]">
                 <dt className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">{d.label}</dt>
                 <dd className="text-xs font-semibold text-foreground mt-1 truncate">
                   {d.value ? (
@@ -303,14 +303,14 @@ export function FounderProfile({
       )}
 
       {CATEGORY_ORDER.filter((cat) => byCategory.has(cat)).map((cat) => (
-        <Card key={cat} className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+        <Card key={cat} className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-bold font-elsie">{CATEGORY_LABELS[cat]}</CardTitle>
             <CardDescription className="text-xs text-muted-foreground">{byCategory.get(cat)!.length} item(s) collected</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 pt-3">
             {byCategory.get(cat)!.map((item) => (
-              <div key={item.id} className="rounded-2xl border border-border bg-[#faf5f3]/45 p-4 transition-all hover:scale-[1.01]">
+              <div key={item.id} className="rounded-lg border border-border bg-[#faf5f3]/45 p-4 transition-all hover:scale-[1.01]">
                 <div className="flex items-start justify-between gap-3">
                   {item.source_url ? (
                     <a
@@ -349,7 +349,7 @@ export function FounderProfile({
       ))}
 
       {timeline.length > 0 && (
-        <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+        <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-bold font-elsie">Timeline</CardTitle>
             <CardDescription className="text-xs text-muted-foreground">All collected signals, most recent first.</CardDescription>

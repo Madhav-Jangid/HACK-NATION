@@ -67,7 +67,7 @@ export function ThesisForm() {
     return <p className="text-sm text-muted-foreground">Loading your thesis…</p>;
   }
   return (
-    <Card className="w-full max-w-2xl rounded-[2.25rem] border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
+    <Card className="w-full max-w-2xl rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm overflow-hidden transition-all duration-300 hover:shadow-[0_12px_35px_rgba(156,90,60,0.03)]">
       <CardHeader className="pb-4 border-b border-border/40">
         <CardTitle className="text-base font-bold font-elsie">Investment thesis</CardTitle>
         <CardDescription className="text-xs text-muted-foreground mt-0.5">

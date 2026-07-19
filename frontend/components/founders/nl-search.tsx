@@ -54,7 +54,7 @@ export function NlSearch() {
   }
 
   return (
-    <Card className="rounded-[2rem] border border-border/80 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
+    <Card className="rounded-lg border border-border/80 bg-[#fffdfd] shadow-sm transition-all duration-300 hover:shadow-[0_12px_30px_rgba(156,90,60,0.03)]">
       <CardHeader>
         <CardTitle className="text-base font-bold font-elsie">Ask your pipeline</CardTitle>
         <CardDescription className="text-xs text-muted-foreground">
@@ -91,7 +91,7 @@ export function NlSearch() {
         {results && results.length > 0 && (
           <ul className="space-y-3">
             {results.map((r) => (
-              <li key={r.founder_id} className="rounded-[1.25rem] border border-border bg-[#faf5f3]/40 p-4 transition-all duration-200 hover:scale-[1.01]">
+              <li key={r.founder_id} className="rounded-xl border border-border bg-[#faf5f3]/40 p-4 transition-all duration-200 hover:scale-[1.01]">
                 <div className="flex items-center justify-between gap-2">
                   <Link
                     href={`/founders/${r.founder_id}`}
