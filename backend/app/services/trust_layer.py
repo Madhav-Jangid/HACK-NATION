@@ -35,3 +35,17 @@ def verify_discovered_source() -> float:
 
 def is_verified(confidence: float | None) -> bool:
     return confidence is not None and confidence >= VERIFIED_THRESHOLD
+
+
+# Inferred/synthesized: not fetched from any single source at all -- derived by
+# the model reasoning over everything else already collected (e.g. classifying
+# "type of startup" from scattered signals). Deliberately below the secondary-
+# source tier so it's never mistaken for verified evidence in the UI/memo.
+CONFIDENCE_INFERRED = 0.4
+
+
+def verify_inferred() -> float:
+    """Confidence for a claim synthesized from other collected signals, not
+    fetched from any single source itself.
+    """
+    return CONFIDENCE_INFERRED

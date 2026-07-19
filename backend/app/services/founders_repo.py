@@ -148,6 +148,25 @@ def list_active_founders(exclude_founder_id: str | None = None) -> list[dict]:
     return response.data
 
 
+def list_portfolio_founders(exclude_founder_id: str | None = None) -> list[dict]:
+    """Founders actually invested in (status='invested'), not merely tracked.
+
+    Backs the brief's Investment Decision "portfolio check" -- a real
+    concentration signal needs actual invested companies, not every founder
+    that happens to be sitting in the funnel.
+    """
+    query = (
+        _client()
+        .table("founders")
+        .select("id, name, company_name, sector, stage, geography, check_amount, invested_at")
+        .eq("status", "invested")
+    )
+    if exclude_founder_id:
+        query = query.neq("id", exclude_founder_id)
+    response = query.execute()
+    return response.data
+
+
 def get_active_thesis() -> dict | None:
     theses = list_investment_theses()
     return theses[0] if theses else None

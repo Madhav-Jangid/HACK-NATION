@@ -43,11 +43,20 @@ def find_diligence_gaps(memory_items: list[dict], committee_outputs: list[dict])
     risk_output = next((o for o in committee_outputs if o.get("agent") == _RISK_AGENT), None)
     if risk_output:
         for concern in risk_output.get("concerns", []) or []:
+            if isinstance(concern, dict):
+                claim = concern.get("claim", "")
+                source = concern.get("source_url")
+            else:
+                claim = str(concern)
+                source = None
+            note = "Flagged by the Risk Partner as missing/unclear information."
+            if source:
+                note += f" (source: {source})"
             gaps.append(
                 {
-                    "claim": str(concern)[:500],
+                    "claim": claim[:500],
                     "gap_type": "missing",
-                    "note": "Flagged by the Risk Partner as missing/unclear information.",
+                    "note": note,
                     "source_agent": _RISK_AGENT,
                 }
             )

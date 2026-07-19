@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/app/components/ui/card";
 import type {
+  Claim,
   CommitteeAgentId,
   CommitteeAgentOutput,
   CommitteeLog,
@@ -21,6 +22,40 @@ import { VerdictRule } from "@/components/ui/verdict-rule";
 
 import { cn } from "@/lib/utils";
 import { Cpu, User, BarChart3, ShieldAlert, Flame, Terminal } from "lucide-react";
+
+// Renders one claim + the exact source it traces back to (brief's Agentic
+// Traceability stretch goal) instead of a bare string -- "source: not cited"
+// is shown rather than silently dropping the field when an agent skips it.
+function ClaimLine({ claim }: { claim: Claim | string }) {
+  if (typeof claim === "string") {
+    return <span>{claim}</span>;
+  }
+  return (
+    <span>
+      {claim.claim}
+      {claim.source_url ? (
+        <a
+          href={claim.source_url}
+          target="_blank"
+          rel="noreferrer"
+          className="ml-1.5 text-[9px] font-bold text-primary/80 hover:underline"
+        >
+          source ↗
+        </a>
+      ) : (
+        <span className="ml-1.5 text-[9px] font-medium italic text-muted-foreground/60">
+          source: not cited
+        </span>
+      )}
+    </span>
+  );
+}
+
+const PORTFOLIO_FIT_LABEL: Record<string, string> = {
+  diversifying: "Diversifying",
+  concentrated: "Concentration risk",
+  no_data: "No portfolio data",
+};
 
 const ACTIVE_STATUSES = new Set(["queued", "running"]);
 const POLL_MS = 2000;
@@ -214,6 +249,16 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
               }
             />
             <p className="mt-4 text-xs font-medium text-foreground/80 leading-relaxed border-t border-border/30 pt-3">{managingPartner.output.reasoning}</p>
+            {managingPartner.output.portfolio_fit && (
+              <div className="mt-3.5 rounded-md border border-border/40 bg-white/40 px-3 py-2">
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
+                  Portfolio check — {PORTFOLIO_FIT_LABEL[managingPartner.output.portfolio_fit] ?? managingPartner.output.portfolio_fit}
+                </p>
+                {managingPartner.output.portfolio_notes && (
+                  <p className="mt-1 text-[11px] text-muted-foreground font-medium">{managingPartner.output.portfolio_notes}</p>
+                )}
+              </div>
+            )}
             {!!managingPartner.output.key_strengths?.length && (
               <div className="mt-3.5">
                 <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Key strengths</p>
@@ -221,7 +266,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
                   {managingPartner.output.key_strengths.map((s, i) => (
                     <li key={i} className="flex items-start gap-1.5">
                       <span className="text-emerald-600 font-bold shrink-0">+</span>
-                      <span>{s}</span>
+                      <ClaimLine claim={s} />
                     </li>
                   ))}
                 </ul>
@@ -234,7 +279,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
                   {managingPartner.output.key_risks.map((s, i) => (
                     <li key={i} className="flex items-start gap-1.5">
                       <span className="text-rose-600 font-bold shrink-0">-</span>
-                      <span>{s}</span>
+                      <ClaimLine claim={s} />
                     </li>
                   ))}
                 </ul>
@@ -269,7 +314,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
                       {o.output.strengths.map((s, i) => (
                         <li key={`s-${i}`} className="flex items-start gap-1">
                           <span className="text-emerald-700 shrink-0 font-bold">+</span>
-                          <span>{s}</span>
+                          <ClaimLine claim={s} />
                         </li>
                       ))}
                     </ul>
@@ -282,7 +327,7 @@ export function CommitteePanel({ founderId }: { founderId: string }) {
                       {o.output.concerns.map((s, i) => (
                         <li key={`c-${i}`} className="flex items-start gap-1">
                           <span className="text-rose-700 shrink-0 font-bold">-</span>
-                          <span>{s}</span>
+                          <ClaimLine claim={s} />
                         </li>
                       ))}
                     </ul>

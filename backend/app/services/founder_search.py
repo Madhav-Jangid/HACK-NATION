@@ -1,3 +1,4 @@
+import random
 import re
 from urllib.parse import urlparse
 
@@ -10,6 +11,30 @@ _CHANNEL_DOMAINS = {
     "github": ["github.com"],
     "producthunt": ["producthunt.com"],
     "hackernews": ["news.ycombinator.com"],
+}
+
+# Forum meta-threads, job/hiring-board posts, and curated-list repos surface
+# constantly alongside real individual founder signals once a channel search
+# is domain-restricted (e.g. every "Ask HN"/"Who's hiring" thread lives on
+# news.ycombinator.com) -- none of these are a person to score or reach out
+# to, so they're dropped rather than tracked as a "founder".
+_NOISE_RE = re.compile(
+    r"\bask hn\b|\bwho'?s hiring\b|\bhiring\?|\blooking for work\b|\bfreelancer\b|"
+    r"\bstartup roles\b|\bawesome[- ]|\bcurated list\b|\bdirector(y|ies)\b|"
+    r"\bforum\b|\bdiscussion\b",
+    re.IGNORECASE,
+)
+
+# Each channel surfaces a different shape of content, so a single generic
+# query ("new startup founder building X") resolves very differently per
+# domain -- these bias each channel's search toward the content type that
+# actually indicates an individual founder there (a Show HN launch post, a
+# Product Hunt maker listing, a GitHub bio), and explicitly exclude the
+# noisiest known false-positive shapes in the query text itself.
+_CHANNEL_QUERY_TEMPLATES = {
+    "github": '"founder" OR "co-founder" building {focus} startup{where} -awesome -curated',
+    "producthunt": '{focus} startup launch maker founder{where} -"looking for" -hiring -forum',
+    "hackernews": 'Show HN {focus} startup I built{where} -"Ask HN" -"who is hiring" -"looking for work"',
 }
 
 _CHANNEL_BY_DOMAIN = {
@@ -163,14 +188,29 @@ def discover_founders(
     geography: list[str],
     max_results: int = 5,
 ) -> list[FounderCandidate]:
-    """Outbound: continuously scan a channel for founders matching the thesis."""
-    focus = ", ".join(sectors) or "AI"
-    where = f" in {', '.join(geography)}" if geography else ""
-    query = f"new startup founder building {focus}{where}"
+    """Outbound: continuously scan a channel for founders matching the thesis.
 
-    return _run_search(
+    Picks one sector/geography per scan rather than concatenating every
+    configured value into one query ("AI, Developer Tools, B2B SaaS, Fintech,
+    ... in India, Southeast Asia, Remote") -- that reads as a bag of keywords
+    to the underlying search engine, not a specific request, and surfaces
+    generic forum threads and curated-list repos instead of actual founder
+    signals. Repeated scans (scheduled or manual) rotate through different
+    sectors over time. Results are also over-fetched and filtered against
+    `_NOISE_RE` since even a focused query still surfaces some noise.
+    """
+    focus = random.choice(sectors) if sectors else "AI"
+    where = f" in {random.choice(geography)}" if geography else ""
+    template = _CHANNEL_QUERY_TEMPLATES.get(
+        channel, '"founder" building {focus} startup{where}'
+    )
+    query = template.format(focus=focus, where=where)
+
+    candidates = _run_search(
         query,
-        max_results,
+        max_results * 3,
         include_domains=_CHANNEL_DOMAINS.get(channel),
         source_channel=f"{channel}_scan",
     )
+    filtered = [c for c in candidates if not _NOISE_RE.search(f"{c.title} {c.snippet or ''}")]
+    return filtered[:max_results]
