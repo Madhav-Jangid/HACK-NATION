@@ -146,3 +146,8 @@ def list_active_founders(exclude_founder_id: str | None = None) -> list[dict]:
         query = query.neq("id", exclude_founder_id)
     response = query.execute()
     return response.data
+
+
+def get_active_thesis() -> dict | None:
+    theses = list_investment_theses()
+    return theses[0] if theses else None

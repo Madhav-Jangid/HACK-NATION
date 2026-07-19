@@ -2,11 +2,11 @@
 
 Four specialist partners (Technical/Founder/Market/Risk) each independently assess
 the founder from the same collected-signal context, a Devil's Advocate challenges
-their conclusions, and a Managing Partner reads everything — including the
-adversarial pass — to produce one final recommendation. Every agent is instructed
-to ground claims in the provided signals and cite sources, and to say "can't be
-assessed from what's here" rather than invent facts — the same evidence-first rule
-as the rest of this pipeline.
+their conclusions, and a Managing Partner reads everything -- including the
+adversarial pass and a portfolio-concentration check -- to produce one final
+recommendation. Every agent is instructed to ground claims in the provided signals
+and cite sources, and to say "can't be assessed from what's here" rather than
+invent facts -- the same evidence-first rule as the rest of this pipeline.
 """
 
 import json
@@ -49,7 +49,7 @@ _SYSTEM_PROMPT = (
     "a $100K check. You are given the founder's structured record and every signal "
     "collected about them (each with a source URL, category, and confidence level). "
     "Ground every claim in the provided signals and cite the source_url of anything "
-    "you rely on. Never invent facts that aren't present in the provided data — if "
+    "you rely on. Never invent facts that aren't present in the provided data -- if "
     "something can't be assessed from the given signals, say so explicitly instead "
     "of guessing. Respond with strict JSON only, no prose outside the JSON object."
 )
@@ -59,7 +59,7 @@ _PARTNER_RESPONSE_FORMAT = (
     '[string], "concerns": [string], "confidence": number between 0 and 1, '
     '"citations": [source_url, ...]}. "score" is your independent 0-100 rating for '
     "this founder on your specific lens (technical capability, founder quality, "
-    "market attractiveness, or risk level respectively) — not a general vibe score."
+    "market attractiveness, or risk level respectively) -- not a general vibe score."
 )
 
 
@@ -104,10 +104,19 @@ def _call_json(client, user_prompt: str) -> dict:
     return json.loads(response.choices[0].message.content)
 
 
+_MARKET_OUTLOOK_FORMAT = (
+    ' Additionally include "outlook": "bullish" | "neutral" | "bear" -- the '
+    "brief requires the Market axis be rated this way, not just a numeric score."
+)
+
+
 def run_partner_agent(client, agent_id: str, role_name: str, instructions: str, context: str) -> dict:
+    response_format = _PARTNER_RESPONSE_FORMAT
+    if agent_id == "market":
+        response_format = _PARTNER_RESPONSE_FORMAT + _MARKET_OUTLOOK_FORMAT
     user_prompt = (
         f"Role: {role_name}\n\nInstructions: {instructions}\n\n{context}\n\n"
-        f"{_PARTNER_RESPONSE_FORMAT}"
+        f"{response_format}"
     )
     result = _call_json(client, user_prompt)
     return {"agent": agent_id, **result}
@@ -136,11 +145,29 @@ def run_devils_advocate(client, context: str, prior_outputs: list[dict]) -> dict
     return {"agent": "devils_advocate", **result}
 
 
-def run_managing_partner(client, founder: dict, all_outputs: list[dict]) -> dict:
+def run_managing_partner(
+    client,
+    founder: dict,
+    all_outputs: list[dict],
+    portfolio_context: str | None = None,
+    thesis_context: str | None = None,
+) -> dict:
     combined = "\n\n".join(
         f"{o['agent']}: {o['summary']} (confidence {o.get('confidence')}, "
         f"strengths: {o.get('strengths')}, concerns: {o.get('concerns')})"
         for o in all_outputs
+    )
+    portfolio_section = (
+        f"\n\nExisting portfolio context (for concentration risk, not a veto):\n{portfolio_context}\n"
+        if portfolio_context
+        else "\n\nExisting portfolio context: no other active portfolio companies on file yet.\n"
+    )
+    thesis_section = (
+        f"\n\nInvestor's configured thesis (every recommendation must be filtered and "
+        f"scored through this fund-specific lens per the brief):\n{thesis_context}\n"
+        if thesis_context
+        else "\n\nNo investment thesis configured yet -- proceed on merit alone but note this "
+        "explicitly in your reasoning."
     )
     user_prompt = (
         "Role: Managing Partner\n\n"
@@ -148,18 +175,28 @@ def run_managing_partner(client, founder: dict, all_outputs: list[dict]) -> dict
         "Read every partner's assessment below, including the Devil's Advocate's "
         "challenge, and produce a final investment recommendation for a $100K check. "
         "Resolve disagreements explicitly rather than averaging them away.\n\n"
-        f"{combined}\n\n"
-        "Also independently answer the brief's third screening axis — Idea vs "
+        f"{combined}\n"
+        f"{thesis_section}\n"
+        f"{portfolio_section}\n"
+        "Weigh the investor's thesis explicitly: a founder outside the configured sectors, "
+        "stage, geography, check-size range, or an excluded industry should not receive a "
+        "bare 'invest' regardless of other merit -- reflect that in both thesis_fit and "
+        "the recommendation itself.\n\n"
+        "If the portfolio context shows meaningful sector or stage concentration, "
+        "note it explicitly in your reasoning as a factor -- it should inform but "
+        "not automatically override an otherwise strong recommendation.\n\n"
+        "Also independently answer the brief's third screening axis -- Idea vs "
         "Market: does the idea, as it stands today, survive scrutiny on its own "
         "merits, or is the team strong enough to pivot to something better? This is "
-        "distinct from the Market Partner's market-size/competition assessment — "
+        "distinct from the Market Partner's market-size/competition assessment -- "
         "it's about whether *this specific idea* is the right bet in that market.\n\n"
         'Respond with JSON: {"recommendation": "invest" | "pass" | "more_info_needed", '
+        '"thesis_fit": "in_thesis" | "partial_fit" | "outside_thesis", '
         '"reasoning": string, "confidence": number between 0 and 1, '
         '"key_strengths": [string], "key_risks": [string], '
         '"idea_vs_market_score": integer 0-100, "idea_vs_market_confidence": number '
         'between 0 and 1, "idea_vs_market_reasoning": string}'
     )
     result = _call_json(client, user_prompt)
-    summary = f"Recommendation: {str(result.get('recommendation', '')).upper()} — {result.get('reasoning', '')}"
+    summary = f"Recommendation: {str(result.get('recommendation', '')).upper()} -- {result.get('reasoning', '')}"
     return {"agent": "managing_partner", "summary": summary, **result}

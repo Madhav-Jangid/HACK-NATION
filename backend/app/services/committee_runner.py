@@ -10,17 +10,31 @@ from app.services.committee import (
 )
 from app.services.committee_repo import (
     get_committee_run,
+    get_previous_opportunity_score,
     insert_committee_agent_output,
     insert_committee_log,
+    insert_diligence_gap,
     insert_investment_memo,
     insert_opportunity_score,
+    list_diligence_gaps,
     update_committee_run,
 )
-from app.services.founders_repo import get_founder, get_latest_founder_score, list_founder_memory_full
+from app.services.diligence import find_diligence_gaps
+from app.services.founders_repo import (
+    get_active_thesis,
+    get_founder,
+    get_latest_founder_score,
+    list_active_founders,
+    list_founder_memory_full,
+    update_founder,
+)
 from app.services.memo import generate_memo
+from app.services.screening import screen_founder
 from app.tools import get_openai
 
 logger = logging.getLogger(__name__)
+
+_TREND_THRESHOLD = 3
 
 
 def _confidence_label(value) -> str:
@@ -33,12 +47,58 @@ def _confidence_label(value) -> str:
     return "low"
 
 
+def _compute_trend(new_score: float, previous: dict | None) -> str | None:
+    if previous is None:
+        return None
+    delta = new_score - previous["score"]
+    if abs(delta) < _TREND_THRESHOLD:
+        return "stable"
+    return "improving" if delta > 0 else "declining"
+
+
+def _thesis_context(thesis: dict | None) -> str | None:
+    if not thesis:
+        return None
+    parts = [
+        "sectors=" + str(thesis.get("sectors")),
+        "stage=" + str(thesis.get("stage")),
+        "geography=" + str(thesis.get("geography")),
+        "check_size_min=" + str(thesis.get("check_size_min")),
+        "check_size_max=" + str(thesis.get("check_size_max")),
+        "ownership_target=" + str(thesis.get("ownership_target")),
+        "risk_appetite=" + str(thesis.get("risk_appetite")),
+        "excluded_industries=" + str(thesis.get("excluded_industries")),
+    ]
+    return ", ".join(parts)
+
+
+def _portfolio_context(founder_id: str) -> str | None:
+    active = list_active_founders(exclude_founder_id=founder_id)
+    if not active:
+        return None
+    names = ", ".join(f"{f['name']} ({f.get('company_name') or 'no company on file'})" for f in active[:10])
+    return f"{len(active)} other active portfolio founder(s) already tracked: {names}."
+
+
+def _run_diligence_check(
+    run_id: str, founder_id: str, memory_items: list[dict], outputs: list[dict]
+) -> None:
+    gaps = find_diligence_gaps(memory_items, outputs)
+    for gap in gaps:
+        insert_diligence_gap({**gap, "founder_id": founder_id, "committee_run_id": run_id})
+    insert_committee_log(
+        run_id, "diligence", f"Diligence check logged {len(gaps)} gap(s) (missing/unverified claims)."
+    )
+
+
 def _record_opportunity_scores(
     run_id: str, founder_id: str, outputs: list[dict], final: dict, persistent_score: dict | None
 ) -> list[dict]:
     """Phase 9: the brief's 3-axis screening (Founder / Market / Idea vs Market),
-    explicitly never averaged into one number — three separate rows, each with
-    its own confidence and rationale, derived from the committee's outputs.
+    explicitly never averaged into one number. Market also carries an "outlook"
+    (bullish/neutral/bear, brief-required) and every axis carries a "trend"
+    (improving/declining/stable, brief-required), computed against the prior
+    row for that axis if one exists.
     """
     by_agent = {o["agent"]: o for o in outputs}
     founder_output = by_agent.get("founder", {})
@@ -46,9 +106,6 @@ def _record_opportunity_scores(
 
     founder_partner_score = founder_output.get("score", 50)
     if persistent_score:
-        # Founder Score is one input into the Founder axis, not a substitute for
-        # it — blended with the committee's own founder-quality read, weighted
-        # toward the committee's fresher, opportunity-specific assessment.
         founder_axis_score = round(0.7 * founder_partner_score + 0.3 * persistent_score["score"])
         founder_rationale = [
             f"Founder Partner rated {founder_partner_score}/100: {founder_output.get('summary', '')}",
@@ -62,44 +119,56 @@ def _record_opportunity_scores(
             "No persistent Founder Score on file yet.",
         ]
 
+    market_score = market_output.get("score", 50)
+    idea_vs_market_score = final.get("idea_vs_market_score", 50)
+
     axis_rows = [
         {
             "axis": "founder",
             "score": founder_axis_score,
             "confidence": _confidence_label(founder_output.get("confidence")),
             "rationale": founder_rationale,
+            "outlook": None,
         },
         {
             "axis": "market",
-            "score": market_output.get("score", 50),
+            "score": market_score,
             "confidence": _confidence_label(market_output.get("confidence")),
             "rationale": [
-                f"Market Partner rated {market_output.get('score', 50)}/100: "
-                f"{market_output.get('summary', '')}"
+                f"Market Partner rated {market_score}/100: {market_output.get('summary', '')}"
             ],
+            "outlook": market_output.get("outlook"),
         },
         {
             "axis": "idea_vs_market",
-            "score": final.get("idea_vs_market_score", 50),
+            "score": idea_vs_market_score,
             "confidence": _confidence_label(final.get("idea_vs_market_confidence")),
             "rationale": [
                 final.get("idea_vs_market_reasoning")
                 or "Managing Partner did not provide separate idea-vs-market reasoning."
             ],
+            "outlook": None,
         },
     ]
 
     inserted = []
     for row in axis_rows:
+        previous = get_previous_opportunity_score(founder_id, row["axis"])
+        trend = _compute_trend(row["score"], previous)
         inserted.append(
-            insert_opportunity_score({**row, "founder_id": founder_id, "committee_run_id": run_id})
+            insert_opportunity_score(
+                {**row, "trend": trend, "founder_id": founder_id, "committee_run_id": run_id}
+            )
         )
     return inserted
 
 
 def run_committee(run_id: str) -> None:
-    """Runs the full Phase 8 committee for one queued run: four independent
-    partners, a Devil's Advocate challenge, then a Managing Partner synthesis.
+    """Runs the full Phase 8 committee for one queued run: a fast rule-based
+    pre-screen, then (if it passes) four independent partners, a Devil's
+    Advocate challenge, a diligence truth-gap check, then a Managing Partner
+    synthesis informed by the investor's thesis and a portfolio-concentration
+    check.
 
     Fire-and-forget: intended to be dispatched via FastAPI BackgroundTasks, so
     every failure path is caught and recorded on the run/log rows rather than
@@ -112,6 +181,17 @@ def run_committee(run_id: str) -> None:
         run_id, {"status": "running", "started_at": datetime.now(UTC).isoformat()}
     )
 
+    memory_items = list_founder_memory_full(founder["id"])
+
+    rejection_reason = screen_founder(founder, memory_items)
+    if rejection_reason:
+        insert_committee_log(run_id, "screening", f"Screened out: {rejection_reason}", "warn")
+        update_founder(founder["id"], {"status": "rejected"})
+        update_committee_run(
+            run_id, {"status": "completed", "completed_at": datetime.now(UTC).isoformat()}
+        )
+        return
+
     client = get_openai()
     if client is None:
         insert_committee_log(
@@ -120,7 +200,6 @@ def run_committee(run_id: str) -> None:
         update_committee_run(run_id, {"status": "failed", "error": "openai_not_configured"})
         return
 
-    memory_items = list_founder_memory_full(founder["id"])
     score = get_latest_founder_score(founder["id"])
     context = build_founder_context(founder, memory_items, score)
 
@@ -133,7 +212,7 @@ def run_committee(run_id: str) -> None:
             insert_committee_agent_output(run_id, result)
             outputs.append(result)
             insert_committee_log(
-                run_id, f"agent_{agent_id}", f"{role_name} done — {result.get('summary', '')[:200]}"
+                run_id, f"agent_{agent_id}", f"{role_name} done -- {result.get('summary', '')[:200]}"
             )
 
         insert_committee_log(run_id, "agent_devils_advocate", "Devil's Advocate challenging...")
@@ -143,16 +222,21 @@ def run_committee(run_id: str) -> None:
         insert_committee_log(
             run_id,
             "agent_devils_advocate",
-            f"Devil's Advocate done — {devils_advocate.get('summary', '')[:200]}",
+            f"Devil's Advocate done -- {devils_advocate.get('summary', '')[:200]}",
         )
 
+        _run_diligence_check(run_id, founder["id"], memory_items, outputs)
+
+        thesis_context = _thesis_context(get_active_thesis())
+        portfolio_context = _portfolio_context(founder["id"])
         insert_committee_log(run_id, "agent_managing_partner", "Managing Partner synthesizing...")
-        final = run_managing_partner(client, founder, outputs)
+        final = run_managing_partner(client, founder, outputs, portfolio_context, thesis_context)
         insert_committee_agent_output(run_id, final)
         insert_committee_log(
             run_id,
             "agent_managing_partner",
-            f"Final recommendation: {final.get('recommendation', 'unknown')}",
+            f"Final recommendation: {final.get('recommendation', 'unknown')} "
+            f"(thesis_fit: {final.get('thesis_fit', 'unknown')})",
         )
 
         opportunity_rows = _record_opportunity_scores(run_id, founder["id"], outputs, final, score)
@@ -161,12 +245,13 @@ def run_committee(run_id: str) -> None:
         )
 
         insert_committee_log(run_id, "memo", "Drafting investment memo...")
-        memo_content = generate_memo(client, context, outputs, score, opportunity_rows)
+        diligence_gaps = list_diligence_gaps(founder["id"])
+        memo_content = generate_memo(client, context, outputs, score, opportunity_rows, diligence_gaps)
         insert_investment_memo(
             {"founder_id": founder["id"], "committee_run_id": run_id, "content": memo_content}
         )
         insert_committee_log(run_id, "memo", "Investment memo drafted.")
-    except Exception as e:  # noqa: BLE001 — a bad/unparseable model response shouldn't crash silently
+    except Exception as e:  # noqa: BLE001
         logger.warning("committee run %s failed: %s", run_id, e)
         insert_committee_log(run_id, "failed", f"Committee run failed: {e}", "error")
         update_committee_run(run_id, {"status": "failed", "error": str(e)})

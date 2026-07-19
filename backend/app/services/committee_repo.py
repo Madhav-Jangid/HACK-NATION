@@ -79,3 +79,17 @@ def list_diligence_gaps(founder_id: str) -> list[dict]:
         .execute()
     )
     return response.data
+
+
+def get_previous_opportunity_score(founder_id: str, axis: str) -> dict | None:
+    response = (
+        _client()
+        .table("opportunity_scores")
+        .select("*")
+        .eq("founder_id", founder_id)
+        .eq("axis", axis)
+        .order("computed_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    return response.data[0] if response.data else None

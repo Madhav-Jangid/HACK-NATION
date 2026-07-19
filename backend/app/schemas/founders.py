@@ -32,6 +32,8 @@ class FounderCreateRequest(BaseModel):
     twitter_url: str | None = None
     source: Literal["inbound", "outbound"]
     source_channel: str | None = None
+    deck_storage_path: str | None = None
+    deck_text: str | None = None
 
 
 class Founder(BaseModel):

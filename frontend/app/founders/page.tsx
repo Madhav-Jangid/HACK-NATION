@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/layout/app-shell";
 import { FounderSourcing } from "@/components/founders/founder-sourcing";
+import { DeckApplication } from "@/components/founders/deck-application";
 import { NlSearch } from "@/components/founders/nl-search";
 
 export default async function FoundersPage() {
@@ -23,11 +24,13 @@ export default async function FoundersPage() {
         Source founders
       </h1>
       <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-        Search a specific founder, or discover new candidates against your
-        thesis. Both feed the same pipeline.
+        Search a specific founder, discover new candidates against your
+        thesis, or submit an inbound application. All three feed the same
+        pipeline.
       </p>
       <div className="mt-8 space-y-8">
         <NlSearch />
+        <DeckApplication />
         <FounderSourcing />
       </div>
     </AppShell>
