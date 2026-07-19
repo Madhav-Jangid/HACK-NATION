@@ -22,9 +22,14 @@ _OUTBOUND_CHANNELS = ["github", "producthunt", "hackernews"]
 _URL_FIELDS = ["github_url", "linkedin_url", "twitter_url", "company_website"]
 
 
-def _existing_urls() -> set[str]:
+def _existing_urls(user_id: str) -> set[str]:
+    """Scoped to one investor -- two different investors independently
+    discovering the same real founder should each get their own tracked row,
+    not have the second investor's scan silently skip it as "already tracked"
+    because a different tenant found it first.
+    """
     urls: set[str] = set()
-    for founder in list_founders():
+    for founder in list_founders(user_id=user_id):
         for field in _URL_FIELDS:
             value = founder.get(field)
             if value:
@@ -46,11 +51,12 @@ def _clean_name(candidate, channel: str) -> str:
     return candidate.title or candidate.url
 
 
-def _candidate_payload(candidate, channel: str) -> dict:
+def _candidate_payload(candidate, channel: str, user_id: str) -> dict:
     payload = {
         "name": _clean_name(candidate, channel)[:200],
         "source": "outbound",
         "source_channel": candidate.source_channel,
+        "user_id": user_id,
     }
     if channel == "github":
         payload["github_url"] = candidate.url
@@ -70,13 +76,14 @@ def run_due_discovery(max_per_channel: int = 3) -> dict:
     if not theses:
         return {"theses_scanned": 0, "candidates_found": 0, "founders_tracked": [], "skipped": "no investment thesis configured"}
 
-    existing = _existing_urls()
     tracked: list[dict] = []
     candidates_found = 0
 
     for thesis in theses:
+        user_id = thesis["user_id"]
         sectors = thesis.get("sectors") or []
         geography = thesis.get("geography") or []
+        existing = _existing_urls(user_id)
         for channel in _OUTBOUND_CHANNELS:
             try:
                 candidates = discover_founders(channel, sectors, geography, max_per_channel)
@@ -90,7 +97,7 @@ def run_due_discovery(max_per_channel: int = 3) -> dict:
                     continue
                 existing.add(candidate.url)
                 try:
-                    founder = create_founder(_candidate_payload(candidate, channel))
+                    founder = create_founder(_candidate_payload(candidate, channel, user_id))
                     job = create_research_job(founder["id"], "outbound")
                 except Exception as e:  # noqa: BLE001
                     logger.warning("failed to track outbound candidate %s: %s", candidate.url, e)

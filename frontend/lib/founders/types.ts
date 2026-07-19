@@ -147,6 +147,8 @@ export type Founder = {
   source_channel: string | null;
   status: string;
   is_cold_start: boolean;
+  // Multi-tenant isolation: the investor who sourced/tracks this founder.
+  user_id: string;
   // Persona card image -- currently only populated from a GitHub avatar
   // (LinkedIn/Twitter don't expose one without their own API access).
   avatar_url: string | null;

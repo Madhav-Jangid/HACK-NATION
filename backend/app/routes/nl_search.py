@@ -21,7 +21,7 @@ def nl_search(body: NlSearchRequest) -> list[NlSearchResult]:
         )
 
     try:
-        founders = list_founders()
+        founders = list_founders(user_id=body.user_id)
     except SupabaseNotConfigured as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
 

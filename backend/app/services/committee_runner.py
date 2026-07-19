@@ -72,12 +72,13 @@ def _thesis_context(thesis: dict | None) -> str | None:
     return ", ".join(parts)
 
 
-def _portfolio_context(founder_id: str) -> str | None:
+def _portfolio_context(user_id: str, founder_id: str) -> str | None:
     """Brief's Investment Decision "portfolio check": concentration signal
-    against founders actually invested in (status='invested'), not every
-    founder merely sitting in the funnel.
+    against founders actually invested in (status='invested') by this same
+    investor -- not every founder merely sitting in the funnel, and not
+    another investor's portfolio.
     """
-    portfolio = list_portfolio_founders(exclude_founder_id=founder_id)
+    portfolio = list_portfolio_founders(user_id, exclude_founder_id=founder_id)
     if not portfolio:
         return None
 
@@ -254,9 +255,9 @@ def run_committee(run_id: str) -> None:
 
         _run_diligence_check(run_id, founder["id"], memory_items, outputs)
 
-        thesis_context = _thesis_context(get_active_thesis())
+        thesis_context = _thesis_context(get_active_thesis(founder["user_id"]))
         try:
-            portfolio_context = _portfolio_context(founder["id"])
+            portfolio_context = _portfolio_context(founder["user_id"], founder["id"])
         except Exception as e:  # noqa: BLE001 -- the portfolio check is an enrichment,
             # not required for a recommendation; a missing migration (e.g. the
             # `founders.sector`/`stage` columns from 0011_portfolio.sql not yet
